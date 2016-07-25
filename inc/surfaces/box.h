@@ -4,13 +4,9 @@
 namespace plu {
 	namespace surfaces {
 		struct box : public surface {
-			vec3 center; vec3 extents; aabb bounds;
+			aabb bounds;
 
-			box(vec3 c, vec3 e) : center(c), radius(r) {}
-
-			inline aabb bounds() const override {
-				return aabb(center-extents, center+extents);
-			}
+			box(vec3 c, vec3 e) : {}
 
 			bool hit(const ray& r, hit_record* hr) const override;
 
