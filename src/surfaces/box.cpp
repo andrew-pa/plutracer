@@ -7,7 +7,7 @@ namespace plu {
 			bounds = aabb(center-extends, center+extents);
 		}
 
-		bool box::hit(const ray& r, hit_record& hr)
+		bool box::hit(const ray& r, hit_record* hr)
 		{
 			vec3 _min = center - extents;
 			vec3 _max = center + extents;
@@ -28,13 +28,13 @@ namespace plu {
 			tmax = glm::min(tmax, x12.y);
 			tmax = glm::min(tmax, x12.z);
 
-			if (tmax < tmin || tmin < 0 || tmin > hr.t) return false;
-			hr.hit_surface = this;
-			hr.t = tmin;
+			if (tmax < tmin || tmin < 0 || tmin > hr->t) return false;
+			hr->hit_surface = this;
+			hr->t = tmin;
 			vec3 p = r(tmin);
-			hr.norm = get_normal(p);
-			hr.texcoord.x = p.x;
-			hr.texcoord.y = p.z;
+			hr->normal = get_normal(p);
+			hr->texture_coords.x = p.x;
+			hr->texture_coords.y = p.z;
 			return true;
 		}
 
