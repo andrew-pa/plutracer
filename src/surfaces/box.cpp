@@ -7,8 +7,7 @@ namespace plu {
 			bounds = aabb(center-extends, center+extents);
 		}
 
-		bool box::hit(const ray& r, hit_record* hr)
-		{
+		bool box::hit(const ray& r, hit_record* hr) const {
 			vec3 _min = center - extents;
 			vec3 _max = center + extents;
 
@@ -38,8 +37,7 @@ namespace plu {
 			return true;
 		}
 
-		vec3 box::get_normal(vec3 p)
-		{
+		vec3 box::get_normal(vec3 p) {
 			static const vec3 axises[] =
 			{
 				vec3(1,0,0),
