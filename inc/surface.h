@@ -12,7 +12,7 @@ namespace plu {
 
 		// convience function that sets the hit_record's values in place
 		inline void set(float _t, vec3 p, vec3 n, vec2 tc) {
-			t = _t; position = p; normal = n; texture_coords = tc;
+			t = _t; normal = n; texture_coords = tc;
 		}
 	};
 	
