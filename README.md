@@ -20,6 +20,9 @@ To build you will need a C++ development environemnt (Visual Studio, XCode, just
 	+ Make a new directory named build (`mkdir build`) and change into it (`cd build`)
 	+ Run CMake on the root directory of the project (`cmake ..`)
 
+	
+	Note: you will need to rerun CMake everytime you add a source file that you want to include, some build tools will autorerun, but I've never found it to really work out, you really just need to rerun CMake	
+
 
 3. Build with platform build tools
 	
@@ -57,5 +60,9 @@ If you want to contribute:
 
 4. Eventually the PR will get merged into master, at which point you will want to update your fork to pull in any changes made by others
 5. Once you have the source code, basically repeat from the end of step 2, no more need for cloning although `git pull` might be necessary
+
+
+Make sure to check out the [Trello board](https://trello.com/b/A8wkHkmC)! 
+
 	
 Maybe one day people will actually get repo read/write access but for now this way I get to look over all the PRs before people commit garbage
