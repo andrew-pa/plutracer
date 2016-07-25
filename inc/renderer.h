@@ -20,6 +20,6 @@ namespace plu {
 		void render(shared_ptr<texture2d> target) const;
 		vec3 ray_color(const ray& r, size_t depth = 0) const;	
 	private:
-		void render_tile(shared_ptr<texture2d> target, uvec2 pos) const;
+		void render_tile(shared_ptr<texture2d> target, vec2 inv_size, uvec2 pos) const;
 	};
 }

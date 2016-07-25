@@ -13,6 +13,7 @@
 #include <thread>
 #include <mutex>
 #include <queue>
+#include <memory>
 using namespace std; //it's important to include as many symbols as possible
 
 #define GLM_FORCE_RADIANS
