@@ -8,7 +8,7 @@ set(DEPD_DIR ${PROJECT_SOURCE_DIR}/depd)
 include_directories("${PROJECT_SOURCE_DIR}/inc")
 include_directories("${DEPD_DIR}/glm")
 
-file(GLOB SOURCE src/*.cpp src/*/*.cpp inc/*)
+file(GLOB SOURCE src/*.cpp src/surfaces/*.cpp inc/*.h inc/surfaces/*.h)
 add_executable(plutracer ${SOURCE})
 set_property(TARGET plutracer PROPERTY CXX_STANDARD 14)
 if(UNIX)
