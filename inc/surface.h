@@ -5,7 +5,7 @@ namespace plu {
 
 	struct hit_record {
 		float t;
-		vec3 position, normal;
+		vec3 normal;
 		vec2 texture_coords;
 
 		hit_record() : t(100000.f) {}
@@ -23,6 +23,9 @@ namespace plu {
 		// if this function returns true, it is assumed that unless hr is nullptr that it has set hr (potentially with its set function)
 		// to represent the point of intersection found
 		virtual bool hit(const ray& r, hit_record* hr) const = 0;
+
+		// return an AABB that surrounds (hopefully fairly tightly) the surface
+		virtual aabb bounds() const = 0;
 	};
 
 }
