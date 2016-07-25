@@ -3,9 +3,9 @@
 namespace plu {
 	namespace surfaces {
 		bool sphere::hit(const ray& r, hit_record* hr) const {
-			vec3 v = r.e - _c;
+			vec3 v = r.e - center;
 			float b = -dot(v, r.d);
-			float det = (b*b) - dot(v, v) + _r*_r;
+			float det = (b*b) - dot(v, v) + radius*radius;
 			if(det < 0) return false;
 			det = sqrt(det);
 			float i1 = b-det, i2 = b+det;

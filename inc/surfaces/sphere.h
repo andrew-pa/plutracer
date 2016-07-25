@@ -8,7 +8,7 @@ namespace plu {
 
 			sphere(vec3 c, float r) : center(c), radius(r) {}
 
-			inline aabb bounds() override {
+			inline aabb bounds() const override {
 				return aabb(center-radius, center+radius);
 			}
 
