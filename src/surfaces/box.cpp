@@ -3,16 +3,12 @@
 namespace plu {
 	namespace surfaces {
 
-		box::box(vec3 c, vec3 e) {
-			box_bounds = aabb(c-e, c+e);
-		}
-
 		bool box::hit(const ray& r, hit_record* hr) const {
 
 			vec3 rrd = 1.f / r.d;
 
-			vec3 t1 = (box_bounds.min - r.e) * rrd;
-			vec3 t2 = (box_bounds.max - r.e) * rrd;
+			vec3 t1 = (box_bounds._min - r.e) * rrd;
+			vec3 t2 = (box_bounds._max - r.e) * rrd;
 
 			vec3 m12 = glm::min(t1, t2);
 			vec3 x12 = glm::max(t1, t2);
@@ -25,14 +21,15 @@ namespace plu {
 			tmax = glm::min(tmax, x12.y);
 			tmax = glm::min(tmax, x12.z);
 
-			if(tmax < tmin || tmin < 0) return false
+			if (tmax < tmin || tmin < 0) return false;
 			if(hr == nullptr) return true;
 			if(tmin > hr->t) return false;
-			hr->set(tmin, r(tmin), get_normal(r(tmin)), vec2(p.x, p.z));
+			vec3 p = r(tmin);
+			hr->set(tmin, p, get_normal(p), vec2(p.x, p.z));
 			return true;
 		}
 
-		vec3 box::get_normal(vec3 p) {
+		vec3 box::get_normal(vec3 p) const {
 
 			vec3 center = box_bounds.center();
 			vec3 extents = box_bounds._max - center;

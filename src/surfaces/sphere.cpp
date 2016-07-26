@@ -11,7 +11,7 @@ namespace plu {
 			float i1 = b-det, i2 = b+det;
 			if(i2 > 0 && i1 > 0) {
 				if(hr == nullptr) return true;
-				if(hr->t > i1) return false;
+				if(hr->t < i1) return false;
 				hr->t = i1;
 				hr->normal = normalize(r(i1) - center);
 				float phi = acosf(-dot(hr->normal, vec3(0,1,0)));

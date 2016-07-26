@@ -93,7 +93,7 @@ namespace plu {
 
 		// check to see if the AABB contains any corner of AABB b
 		// this may find intersections as well as containment
-		inline bool inside_of(const aabb& b)
+		inline bool inside_of(const aabb& b) const
 		{
 			return b.contains(vec3(_min.x, _min.y, _min.z)) ||
 
@@ -180,7 +180,7 @@ namespace plu {
 			return pair<float, float>(tmin, tmax);
 		}
 
-		inline vec3 center()
+		inline vec3 center() const
 		{
 			return (_min + _max) * 1.f / 2.f;
 		}
