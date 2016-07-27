@@ -1,10 +1,12 @@
 #include "renderer.h"
 
 namespace plu {
+	// this code is also preliminary, mostly for testing purposes
+	// there are many problems indeed here
 	vec3 renderer::ray_color(const ray& r, size_t depth) const {
 		hit_record hr;
 		if (scene->hit(r, &hr)) {
-			return abs(hr.normal);
+			return hr.surf->mat->diffuse(hr);
 		}
 		return vec3(0.f);
 	}
