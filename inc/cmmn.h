@@ -93,7 +93,7 @@ namespace plu {
 
 		// check to see if the AABB contains any corner of AABB b
 		// this may find intersections as well as containment
-		inline bool inside_of(const aabb& b)
+		inline bool inside_of(const aabb& b) const
 		{
 			return b.contains(vec3(_min.x, _min.y, _min.z)) ||
 
@@ -180,7 +180,7 @@ namespace plu {
 			return pair<float, float>(tmin, tmax);
 		}
 
-		inline vec3 center()
+		inline vec3 center() const
 		{
 			return (_min + _max) * 1.f / 2.f;
 		}
@@ -194,6 +194,24 @@ namespace plu {
 		{
 			add_point(b._min);
 			add_point(b._max);
+		}
+	};
+
+	// represents the results of a ray-surface intersection
+	struct hit_record {
+		// distance along the ray at which the intersection occured
+		float t;
+		vec3 normal;
+		vec2 texture_coords;
+		// the surface that got hit by the ray
+		struct surface const * surf;
+
+		hit_record() : t(100000.f) {}
+
+		// convience function that sets the hit_record's values in place
+		inline void set(struct surface const * s, float _t, vec3 p, vec3 n, vec2 tc) {
+			t = _t; normal = n; texture_coords = tc;
+			surf = s;
 		}
 	};
 }

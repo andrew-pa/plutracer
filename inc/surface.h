@@ -1,19 +1,14 @@
 #pragma once
 #include "cmmn.h"
 
+#include "props.h"
+
 namespace plu {
 
-	struct hit_record {
-		float t;
-		vec3 normal;
-		vec2 texture_coords;
-
-		hit_record() : t(100000.f) {}
-
-		// convience function that sets the hit_record's values in place
-		inline void set(float _t, vec3 p, vec3 n, vec2 tc) {
-			t = _t; normal = n; texture_coords = tc;
-		}
+	// this is preliminary and should probably get it's own header soon
+	struct material {
+		props::color diffuse;
+		material(props::color df) : diffuse(df) {}
 	};
 	
 	struct surface {
@@ -26,6 +21,11 @@ namespace plu {
 
 		// return an AABB that surrounds (hopefully fairly tightly) the surface
 		virtual aabb bounds() const = 0;
+
+		shared_ptr<material> mat;
+
+	protected:
+		surface(shared_ptr<material> m = nullptr) : mat(m) {}
 	};
 
 }

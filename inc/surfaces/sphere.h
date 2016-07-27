@@ -6,7 +6,7 @@ namespace plu {
 		struct sphere : public surface {
 			vec3 center; float radius;
 
-			sphere(vec3 c, float r) : center(c), radius(r) {}
+			sphere(vec3 c, float r, shared_ptr<material> m) : center(c), radius(r), surface(m) {}
 
 			inline aabb bounds() const override {
 				return aabb(center-radius, center+radius);

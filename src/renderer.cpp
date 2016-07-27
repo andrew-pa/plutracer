@@ -1,7 +1,13 @@
 #include "renderer.h"
 
 namespace plu {
+	// this code is also preliminary, mostly for testing purposes
+	// there are many problems indeed here
 	vec3 renderer::ray_color(const ray& r, size_t depth) const {
+		hit_record hr;
+		if (scene->hit(r, &hr)) {
+			return hr.surf->mat->diffuse(hr);
+		}
 		return vec3(0.f);
 	}
 
@@ -42,8 +48,8 @@ namespace plu {
 	void renderer::render_tile(shared_ptr<texture2d> target, vec2 inv_size, uvec2 pos) const {
 		for (uint32_t y = pos.y; y < pos.y+tile_size.y && y < target->size.y; ++y) {
 			for (uint32_t x = pos.x; x < pos.x+tile_size.x && x < target->size.x; ++x) {
-				vec2 uv = vec2(x, y)*inv_size;
-				target->pixel(uvec2(x, y)) = vec3(uv.x, uv.y, 1.f-uv.x);
+				vec2 uv = (vec2(x,y) - ((vec2)target->size * .5f)) / ((vec2)target->size*2.f);
+				target->pixel(uvec2(x, y)) = ray_color(cam.generate_ray(uv));
 			}
 		}
 	}
