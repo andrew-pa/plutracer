@@ -22,9 +22,11 @@ namespace plu {
 		// return an AABB that surrounds (hopefully fairly tightly) the surface
 		virtual aabb bounds() const = 0;
 
+		// the material for this surface
 		shared_ptr<material> mat;
 
 	protected:
+		// provide a constructor for implmentations to set the material upon construction
 		surface(shared_ptr<material> m = nullptr) : mat(m) {}
 	};
 

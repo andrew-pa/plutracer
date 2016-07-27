@@ -6,6 +6,9 @@ namespace plu {
 	vec3 renderer::ray_color(const ray& r, size_t depth) const {
 		hit_record hr;
 		if (scene->hit(r, &hr)) {
+			if (scene->hit(ray(r(hr.t+0.01f), normalize(vec3(.5f, .5f, 0.f))), nullptr)) {
+				return vec3(0.f);
+			}
 			return hr.surf->mat->diffuse(hr);
 		}
 		return vec3(0.f);
@@ -21,6 +24,7 @@ namespace plu {
 		}
 
 		vec2 inv_size = 1.f / (vec2)target->size;
+		float inv_ssq = 1.f / (float)num_samples_sq;
 
 		mutex tile_qu_mutex;
 		vector<thread> workers;
@@ -37,7 +41,7 @@ namespace plu {
 						tile = tiles.front(); tiles.pop();
 						tile_qu_mutex.unlock();
 					}
-					render_tile(target, inv_size, tile);
+					render_tile(target, inv_size, inv_ssq, tile);
 				}		
 			}));
 		}
@@ -45,11 +49,18 @@ namespace plu {
 		for(auto& t : workers) t.join(); //block until render finishes for convenience
 	}
 
-	void renderer::render_tile(shared_ptr<texture2d> target, vec2 inv_size, uvec2 pos) const {
+	void renderer::render_tile(shared_ptr<texture2d> target, vec2 inv_size, float inv_ssq, uvec2 pos) const {
 		for (uint32_t y = pos.y; y < pos.y+tile_size.y && y < target->size.y; ++y) {
 			for (uint32_t x = pos.x; x < pos.x+tile_size.x && x < target->size.x; ++x) {
-				vec2 uv = (vec2(x,y) - ((vec2)target->size * .5f)) / ((vec2)target->size*2.f);
-				target->pixel(uvec2(x, y)) = ray_color(cam.generate_ray(uv));
+				//vec2 uv = (vec2(x,y) - ((vec2)target->size * .5f)) / target->size*2;
+				vec2 uv = (vec2(x, y)*inv_size)*2.f - 1.f;
+				vec3 col = vec3(0.f);
+				for(uint32_t dy = 0; dy < num_samples_sq; ++dy)
+					for (uint32_t dx = 0; dx < num_samples_sq; ++dx) {
+						vec2 p = uv + ((vec2(dx, dy)*inv_ssq)*2.f - 1.f)*inv_size;
+						col += ray_color(cam.generate_ray(p));
+					}
+				target->pixel(uvec2(x, y)) = col * inv_ssq * inv_ssq;
 			}
 		}
 	}
