@@ -196,4 +196,22 @@ namespace plu {
 			add_point(b._max);
 		}
 	};
+
+	// represents the results of a ray-surface intersection
+	struct hit_record {
+		// distance along the ray at which the intersection occured
+		float t;
+		vec3 normal;
+		vec2 texture_coords;
+		// the surface that got hit by the ray
+		struct surface const * surf;
+
+		hit_record() : t(100000.f) {}
+
+		// convience function that sets the hit_record's values in place
+		inline void set(struct surface const * s, float _t, vec3 p, vec3 n, vec2 tc) {
+			t = _t; normal = n; texture_coords = tc;
+			surf = s;
+		}
+	};
 }
