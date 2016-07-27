@@ -13,7 +13,7 @@ namespace plu {
 	{
 	public:
 		// maps Tx -> C
-		virtual C& texel(Tx c) const = 0;
+		virtual C texel(Tx c) const = 0;
 		virtual ~texture() {}
 	};
 
@@ -46,7 +46,7 @@ namespace plu {
 		// c is in [0, 1] range
 		// currently repeats the texture if it is beyond that
 		// additionaly does not perform any kind of filtering
-		inline vec3& texel(vec2 c) const override
+		inline vec3 texel(vec2 c) const override
 		{
 			c = mod(c, vec2(1.f));
 			uvec2 ic = floor(c*(vec2)size);
