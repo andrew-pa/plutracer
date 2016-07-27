@@ -25,7 +25,7 @@ namespace plu {
 			if(hr == nullptr) return true;
 			if(tmin > hr->t) return false;
 			vec3 p = r(tmin);
-			hr->set(tmin, p, get_normal(p), vec2(p.x, p.z));
+			hr->set(this, tmin, p, get_normal(p), vec2(p.x, p.z));
 			return true;
 		}
 

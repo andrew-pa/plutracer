@@ -6,7 +6,7 @@ namespace plu {
 		struct box : public surface {
 			aabb box_bounds;
 
-			box(vec3 c, vec3 e) : box_bounds(c-e,c+e) {}
+			box(vec3 c, vec3 e, shared_ptr<material> m) : box_bounds(c-e,c+e), surface(m) {}
 
 			inline aabb bounds() const override {
 				return box_bounds;

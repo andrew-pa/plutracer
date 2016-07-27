@@ -18,7 +18,8 @@ namespace plu {
 				hr->texture_coords.y = phi * one_over_pi<float>();
 				float theta = acosf(dot(vec3(0,0,-1), hr->normal)/sinf(phi)) * two_over_pi<float>();
 				if(dot(vec3(1,0,0), hr->normal) >= 0) theta = 1.f - theta;
-				hr->texture_coords.x = theta;		
+				hr->texture_coords.x = theta;	
+				hr->surf = this;
 				return true;
 			}
 			return false;
