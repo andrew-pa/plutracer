@@ -10,11 +10,10 @@ namespace plu {
 		}
 
 		//create hr for each side so they can be compared
-		hit_record * lhr = new hit_record();
-		hit_record * rhr = new hit_record();
+		hit_record lhr, rhr;
 
-		bool lhit = left_child->hit(r, lhr);
-		bool rhit = right_child->hit(r, rhr);
+		bool lhit = left_child->hit(r, &lhr);
+		bool rhit = right_child->hit(r, &rhr);
 
 		//no hit
 		if(lhit == false && rhit == false) {
@@ -26,7 +25,7 @@ namespace plu {
 			if(hr == nullptr) {
 				return true;
 			}
-			hr->set(rhr->surf, rhr->t, vec3(), rhr->normal, rhr->texture_coords);
+			hr->set(rh.surf, rhr.t, vec3(), rhr.normal, rhr.texture_coords);
 			return true;
 		}
 
@@ -35,7 +34,7 @@ namespace plu {
 			if(hr == nullptr) {
 				return true;
 			}
-			hr->set(lhr->surf, lhr->t, vec3(), lhr->normal, lhr->texture_coords);
+			hr->set(lhr.surf, lhr.t, vec3(), lhr.normal, lhr.texture_coords);
 			return true;
 		}
 
@@ -45,11 +44,11 @@ namespace plu {
 		}
 		//set hr to closest hit
 		if(lhr->t < rhr->t) {
-			hr->set(lhr->surf, lhr->t, vec3(), lhr->normal, lhr->texture_coords);
+			hr->set(lhr.surf, lhr.t, vec3(), lhr.normal, lhr.texture_coords);
 			return true;
 		}
 
-		hr->set(rhr->surf, rhr->t, vec3(), rhr->normal, rhr->texture_coords);
+		hr->set(rhr.surf, rhr.t, vec3(), rhr.normal, rhr.texture_coords);
 		return true;
 	}
 }
