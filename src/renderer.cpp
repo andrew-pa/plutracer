@@ -27,9 +27,12 @@ namespace plu {
 		float inv_ssq = 1.f / (float)num_samples_sq;
 
 		mutex tile_qu_mutex;
+		mutex stdout_mutex;
 		vector<thread> workers;
 		for(int P = 0; P < thread::hardware_concurrency(); ++P) {
 			workers.push_back(thread([&](){
+				uint64_t tiles_rendered = 0;
+				auto start = chrono::high_resolution_clock::now();
 				while(true) {
 					uvec2 tile;
 					{
@@ -42,7 +45,15 @@ namespace plu {
 						tile_qu_mutex.unlock();
 					}
 					render_tile(target, inv_size, inv_ssq, tile);
-				}		
+					tiles_rendered++;
+				}
+				auto end = chrono::high_resolution_clock::now();
+				// unfortunatly there's really no better place to dump this information so it's just going on stdout
+				// it doesn't really matter so who cares, these numbers are probably somewhat inaccurate anyways
+				stdout_mutex.lock();
+				cout << "thread #" << this_thread::get_id() << " rendered " << tiles_rendered << " tiles in " <<
+					chrono::duration_cast<chrono::milliseconds>(end - start).count() << "ms" << endl;
+				stdout_mutex.unlock();
 			}));
 		}
 
