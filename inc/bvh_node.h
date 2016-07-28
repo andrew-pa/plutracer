@@ -1,6 +1,5 @@
 #pragma once
 
-#include <list>
 #include "cmmn.h"
 #include "surfaces\surfaces.h"
 
