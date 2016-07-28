@@ -31,8 +31,6 @@
  			bounds = object->bounds();
  		}
 
- 		bool is_leaf() {
- 			return (object != nullptr);
- 		}
+ 		bool hit(const ray& r, hit_record * hr);
  	}
  }
