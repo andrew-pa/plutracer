@@ -21,10 +21,8 @@
  			bounds = aabb();
  		}
 
- 		bvh_node(bvh_node * p, bvh_node * lc, bvh_node * rc, vec3 mi, vec3 mx)
- 		: parent(p), left_child(lc), right_child(rc), object(nullptr) {
- 			bounds = aabb(mi, mx);
- 		}
+ 		bvh_node(bvh_node * p, bvh_node * lc, bvh_node * rc, aabb b)
+ 		: parent(p), left_child(lc), right_child(rc), bounds(b), object(nullptr) {}
 
  		bvh_node(bvh_node * p, surface * o) 
  		: parent(p), left_child(nullptr), right_child(nullptr), object(o) {
@@ -32,5 +30,5 @@
  		}
 
  		bool hit(const ray& r, hit_record * hr);
-	}
+	};
  }
