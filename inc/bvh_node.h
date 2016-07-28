@@ -32,5 +32,5 @@
  		}
 
  		bool hit(const ray& r, hit_record * hr);
- 	}
+	}
  }

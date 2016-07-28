@@ -21,7 +21,7 @@ namespace plu {
 				return root.bounds;
 			}
 
-			bool hit(const ray& r hit_record * hr) const override;
+			bool hit(const ray& r, hit_record * hr) const override;
 		}
 
 
