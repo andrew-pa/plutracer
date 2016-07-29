@@ -2,8 +2,8 @@
 #include "cmmn.h"
 #include "texture.h"
 #include "renderer.h"
-#include "surfaces\surfaces.h"
-#include "textures\textures.h"
+#include "surfaces/surfaces.h"
+#include "textures/textures.h"
 
 namespace plu {
 	// slow as possible, but for testing purposes whatever
