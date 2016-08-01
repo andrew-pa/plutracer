@@ -14,7 +14,7 @@ namespace plu {
 
 			bool hit(const ray& r, hit_record* hr) const override;
 
-			vec3 box::get_normal(vec3 p) const;
+			vec3 get_normal(vec3 p) const;
 		};
 	}
 }

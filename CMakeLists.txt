@@ -12,6 +12,7 @@ file(GLOB SOURCE src/*.cpp src/surfaces/*.cpp inc/*.h inc/*/*.h)
 add_executable(plutracer ${SOURCE})
 set_property(TARGET plutracer PROPERTY CXX_STANDARD 14)
 if(UNIX)
+	add_definitions("--std=gnu++11") # old cmake is silly
 	target_link_libraries(plutracer pthread)
 endif()
 
