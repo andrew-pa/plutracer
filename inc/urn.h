@@ -254,6 +254,10 @@ namespace urn {
 		eval_context() {
 			push_scope();
 		}
+
+		// initialize the interpreter with some std functions
+		// !! TODO: this is probably a silly way to do this and should change
+		void create_std_funcs();
 			
 		// evaluate a value, but don't assume that blocks are executable
 		value eval1(const value& v); 
@@ -261,6 +265,12 @@ namespace urn {
 		// evaluate a value and return the new value that is the result
 		// this is effectivly urn's do function
 		value eval(const value& v);
+
+		// evaluate a value and return the new resulting value
+		// this differs from eval because when it encounters blocks it creates a new block
+		// that contains the value of evaluating all of the expressions in side of the block
+		// so it effectivly urn's reduce function
+		value reduce(const value& v);
 	private:
 		value evaluate_expr(const vector<value>& Vs, int& i);
 	};

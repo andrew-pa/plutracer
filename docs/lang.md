@@ -94,4 +94,84 @@ There are some interesting things of note for some of the basic values
 
 	Definitions, when evaluated, store the evaluated result of the value they are specified under the definition name. The return value is that of the stored value.
 
+# standard functions
+
+_Note: this is preliminary and subject to change!_
+
+In examples `====>` means the result of evaluation
+
+### binary operators
+
+- `+`
+
+	Add numbers together or concat two blocks
+	````
+	1 + 2 ====> 3
+	["hi"] + ["hello" "world"] ====> ["hi" "hello" "world"]
+	````	
+
+### functions
+
+- `do`
+
+	Evaluate a block and return the result of it's last expression
+	````
+	do [ 1 + 2 ] ====> 3
+	do [ 10 + 7 7 + 3] ====> 10
+	do [ x: 8 x + 2] ====> 10
+	````
+
+- `reduce`
+
+	Evaluate a block and return a block containg the results of all expressions in the argument block
+	````
+	reduce [ 10 + 7 7 + 3 ] ====> [ 17 10 ]
+	reduce [ x: 8 x + 2] ====> [ 8 10 ]
+	````
+
+- `print`
+
+	Print a value to stdout
+	````
+	print 10 ====> <null> //but note that on stdout there will be '10'
+	````
+
+- `func`
+
+	Define a new function with argument names in the first block argument and a body value as the second argument
+	````
+	do [inc: (func [a] [a + 1]) inc 3] ====> 4
+	do [sum3: (func [a b c] [a + b + c]) sum 1 2 3] ====> 6
+	````
+
+- `concat-all`
+
+	Takes a block of blocks and returns a new block that contains all the values of each of the blocks in the input block
+	````
+	concat-all [ [1] [2] [3] ] ====> [1 2 3]
+	concat-all [ [1] [x y] [2] ] ====> [ 1 x y 2]
+	````
+	
+- `append`
+
+	Appends a value into a block
+	````
+	append [1 2] (1 + 2) ====> [1 2 3]
+	do (append [append [10 11]] "hi") ====> [10 11 "hi"] 
+	````
+
+- `collect-range`
+	
+	Iterates over a integer range and evaluates the body block for each step, with variable named by the input var id bound to the current step 'count'
+	````
+	collect-range 'x [0 3] [x] ====> [0 1 2]
+	````
+
+- `block-format`
+
+	Takes a format block and a block containing expressions, and returns a new block in which identifers of the form :0, :1, :999 are replaced with the value of the expression in the values block at that index
+	````
+	block-format [stuff :0 [other stuff] :1] ["hi" 7] ====> [stuff "hi" [other stuff] 7]
+	block-format [junk [:0 :1] "hi" :2] ["a" "b" 9] ====> [junk ["a" "b"] "hi" 9]
+	````
 
