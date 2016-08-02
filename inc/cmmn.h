@@ -209,7 +209,7 @@ namespace plu {
 		hit_record() : t(100000.f) {}
 
 		// convience function that sets the hit_record's values in place
-		inline void set(struct surface const * s, float _t, vec3 p, vec3 n, vec2 tc) {
+		inline void set(struct surface const * s, float _t, vec3 n, vec2 tc) {
 			t = _t; normal = n; texture_coords = tc;
 			surf = s;
 		}
