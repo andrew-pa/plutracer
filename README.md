@@ -1,6 +1,5 @@
 # plutracer
 Pathtracer written by friends, for the lulz
-No telling quite how this will turn out
 
 # building
 
