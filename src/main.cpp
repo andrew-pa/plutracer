@@ -171,7 +171,8 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
-	auto s = new plu::group(surfs);
+	auto s = //new plu::group(surfs);
+		new plu::surfaces::bvh_tree(surfs);
 	plu::renderer r(s, cam, uvec2(64), smp_cnt);
 	
 	auto init_end = chrono::high_resolution_clock::now();
@@ -187,6 +188,11 @@ int main(int argc, char* argv[]) {
 		<< "scene: " << args[0] << endl
 		<< "init took: " << init_time.count() << "ms" << endl
 		<< "render took: " << render_time.count() << "ms" << endl;
+#ifdef _DEBUG
+	watermark << "DEBUG" << endl;
+#else
+	watermark << "RELEASE" << endl;
+#endif
 	cout << watermark.str();
 
 	tx->draw_text(watermark.str(), uvec2(9, 10), vec3(0.2f)); // make a snazzy drop shadow

@@ -4,3 +4,5 @@
 
 #include "surfaces/sphere.h"
 #include "surfaces/box.h"
+
+#include "surfaces/bvh_tree.h"
