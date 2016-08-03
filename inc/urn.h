@@ -30,7 +30,7 @@ namespace urn {
 
 	// takes a std::istream and provides an interface to read tokens out of it
 	class token_stream {
-		istream& in;
+		istream in;
 		uint32_t curln, curcol;
 		string clineb;
 		inline void next_line() {
@@ -91,8 +91,18 @@ namespace urn {
 			}
 		}
 	public:
-		token_stream(istream& i) : in(i), curln(-1), curcol(0) {
+		token_stream(istream&& i) : in(i.rdbuf()), curln(-1), curcol(0) {
 			next_line();
+		}
+
+		token_stream(const token_stream& ts) : in(ts.in.rdbuf()), curln(ts.curln), curcol(ts.curcol), clineb(ts.clineb) {}
+		
+		const token_stream& operator =(const token_stream& ots) {
+			in.rdbuf(ots.in.rdbuf());
+			curln = ots.curln;
+			curcol = ots.curcol;
+			clineb = ots.clineb;
+			return *this;
 		}
 
 		token next() {
@@ -111,6 +121,14 @@ namespace urn {
 		//void expect(token::tktype t, const string& v = "");
 	};
 
+	struct value;
+
+	namespace detail {
+		template<typename T>
+		struct get_helper { 
+			inline static T get(value const* v); 
+		};
+	}
 
 	// a value in urn
 	struct value {
@@ -132,7 +150,6 @@ namespace urn {
 			NativeValue	//	<native value>
 		} type;
 		
-	protected:
 
 		union {
 			int64_t i;
@@ -143,11 +160,11 @@ namespace urn {
 		};
 		vector<value> vs;
 		
-		typedef pair<string, value> pair_string_value;
-		typedef vector<value> vector_value;
+protected:
 		value(decltype(type) t, const string& v) : type(t), s(new string(v)) {}
 		value(decltype(type) t, const vector<value>& v) : type(t), vs(v) {}
-	public:
+
+public:
 
 		value(token_stream& ts);
 
@@ -169,22 +186,13 @@ namespace urn {
 		//   the constructor that makes a string value, so they need to have names	
 
 		friend ostream& operator <<(ostream& os, const value& v);
-		friend struct eval_context;
 
 		inline bool is_null() const { return type == Null; }
 
 		// obtain a C++ value for a urn value
 		// this _does not_ evaluate the value
 		template<typename T>
-		inline T get() const;
-#define getf(E, T, A) template<> inline T get<T>() const { if(type != E) throw runtime_error("expected value of type " #E); return 
-		getf(Int, int64_t) i; }
-		getf(Float, double) f; }
-		getf(String, string) *s; }
-		getf(Def, pair_string_value) { *s, vs[0] }; }
-		getf(Block, vector_value) vs; }
-		getf(NativeValue, value) (*nvfn)(); }
-#undef getf
+		inline T get() const { return detail::get_helper<T>::get(this); }
 
 		inline const string& get_var() const {
 			if (type != Var) throw runtime_error("expected value of type Var"); return *s;
@@ -216,16 +224,29 @@ namespace urn {
 
 		~value();
 	};
-
+	
 	struct value::func_t {
 		vector<string> argnames;
 		value body;
 		func_t(const vector<string>& an = {}, const value& b = value()) : argnames(an), body(b) {}
 	};
-
-	template<>
-	inline value::func_t value::get<value::func_t>() const {
-		if (type != value::Func) throw runtime_error("expected value of type Func"); return *fn;
+	namespace detail {
+		typedef pair<string, value> pair_string_value;
+		typedef vector<value> vector_value;
+#define getf(E, T) template<> struct get_helper<T> { inline static T get(value const* v) { if(v->type != value:: E) throw runtime_error("expected value of type " #E); return 
+		getf(Int, int64_t) v->i; } };
+		getf(Float, double) v->f; } };
+		getf(String, string) *v->s; } };
+		getf(Def, pair_string_value) { *v->s, v->vs[0] }; }};
+		getf(Block, vector_value) v->vs; }};
+		getf(NativeValue, value) (*v->nvfn)(); }};
+#undef getf
+		template<> struct get_helper<value::func_t> {
+			inline static value::func_t get(value const* v) {
+				if(v->type != value::Func) throw runtime_error("expected value of type Func");
+				return *v->fn;
+			}
+		};	
 	}
 
 	// represents a evaluation context

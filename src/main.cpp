@@ -153,7 +153,9 @@ int main(int argc, char* argv[]) {
 			string s;
 			cout << "urn> ";
 			getline(cin, s);
-			auto v = urn::value(urn::token_stream(istringstream(s)));
+			//auto ss = istringstream(s);
+			auto ts = urn::token_stream(istringstream(s));
+			auto v = urn::value(ts);
 			if (v.type == urn::value::Val) {
 				auto cmd = v.get_val();
 				if (cmd == "!q") break;
@@ -165,7 +167,8 @@ int main(int argc, char* argv[]) {
 
 	auto init_start = chrono::high_resolution_clock::now();
 
-	urn::value scene_tlv = urn::value(urn::token_stream(ifstream(args[argi]))); //requires first cmdline argument to be path to scene file for now
+	auto ts = urn::token_stream(ifstream(args[argi]));
+	urn::value scene_tlv = urn::value(ts); //requires first cmdline argument to be path to scene file for now
 
 	auto resolu_b = scene_tlv.named_block_val("resolution");
 	auto resolution = resolu_b.is_null() ? uvec2(1280, 960) : uvec2(resolu_b[0].get<int64_t>(), resolu_b[1].get<int64_t>());
