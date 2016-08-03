@@ -25,7 +25,7 @@ using namespace std; //it's important to include as many symbols as possible
 #include <glm/gtc/random.hpp>
 using namespace glm;
 
-#if __GNUC__ < 5
+#if defined(__GNUC__) && __GNUC__ < 5
 //we don't have C++14 so we're going to need some nice definitions here
 template<typename T, typename... Args>
 inline std::unique_ptr<T> make_unique(Args&& ...args) {

@@ -31,6 +31,7 @@ namespace plu {
 				vector<shared_ptr<surface>> rv(s.begin() + mid, s.end());
 				left_child = make_unique<bvh_node>(this, lv, (axis + 1) % 3);
 				right_child = make_unique<bvh_node>(this, rv, (axis + 1) % 3);
+				bounds = aabb(left_child->bounds, right_child->bounds);
 			}
 		}
 
@@ -41,9 +42,8 @@ namespace plu {
 			}
 
 			//check if ray intersects node aabb
-			if(!bounds.hit(r)) {
+			if(!bounds.hit(r))
 				return false;
-			}
 
 			//create hr for each side so they can be compared
 			hit_record lhr, rhr;
@@ -52,32 +52,28 @@ namespace plu {
 			bool rhit = right_child->hit(r, &rhr);
 
 			//no hit
-			if (lhit == false && rhit == false) {
+			if (lhit == false && rhit == false)
 				return false;
-			}
-
+			
 			//right hit only
 			if (lhit == false) {
-				if (hr == nullptr) {
+				if (hr == nullptr)
 					return true;
-				}
 				hr->set(rhr.surf, rhr.t, rhr.normal, rhr.texture_coords);
 				return true;
 			}
 
 			//right hit only
 			if (rhit == false) {
-				if (hr == nullptr) {
+				if (hr == nullptr)
 					return true;
-				}
 				hr->set(lhr.surf, lhr.t, lhr.normal, lhr.texture_coords);
 				return true;
 			}
 
 			//both hit
-			if (hr == nullptr) {
+			if (hr == nullptr)
 				return true;
-			}
 			//set hr to closest hit
 			if (lhr.t < rhr.t) {
 				hr->set(lhr.surf, lhr.t, lhr.normal, lhr.texture_coords);

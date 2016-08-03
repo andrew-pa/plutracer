@@ -153,7 +153,6 @@ int main(int argc, char* argv[]) {
 			string s;
 			cout << "urn> ";
 			getline(cin, s);
-			//auto ss = istringstream(s);
 			auto ts = urn::token_stream(istringstream(s));
 			auto v = urn::value(ts);
 			if (v.type == urn::value::Val) {

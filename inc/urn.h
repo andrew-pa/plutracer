@@ -30,35 +30,29 @@ namespace urn {
 
 	// takes a std::istream and provides an interface to read tokens out of it
 	class token_stream {
-		istream in;
 		uint32_t curln, curcol;
-		string clineb;
+		vector<string> lines;
 		inline void next_line() {
-			if (in.eof()) return;
-			do { getline(in, clineb); } while (in.good() && clineb.size() == 0);
 			curcol = 0; curln++;
 		}
 		inline void next_char(int num = 1) {
 			curcol += num;
-			if (curcol > clineb.size() - 1)
-				next_line();
+			if (curcol > lines[curln].size() - 1) {
+				curcol = 0; curln++;
+			}
 		}
 		inline void next_ws() {
-			while (more() && (isspace(clineb[curcol]) || iscntrl(clineb[curcol]))) next_char();
+			while (more() && (isspace(lines[curln][curcol]) || iscntrl(lines[curln][curcol]))) next_char();
 		}
 		inline bool isterm(char c) {
 			return isspace(c) || c == '(' || c == ')' || c == '[' || c == ']';
 		}
 		pair<token, int> get(int of = 0) {
 			int i = curcol + of;
-			while (isspace(clineb[i])) i++;
-			string* lb = &clineb;
-			string s;
-			if (i >= clineb.size()) {
-				auto rsp = in.tellg();
-				do { getline(in, s); } while (in.good() && s.size() == 0);
-				in.seekg(rsp);
-				lb = &s; i = 0;
+			while (isspace(lines[curln][i])) i++;
+			string* lb = &lines[curln];
+			if (i >= lb->size()) {
+				lb = &lines[curln+1]; i = 0;
 				while (isspace((*lb)[i])) i++;
 			}
 			char c = (*lb)[i];
@@ -91,18 +85,12 @@ namespace urn {
 			}
 		}
 	public:
-		token_stream(istream&& i) : in(i.rdbuf()), curln(-1), curcol(0) {
-			next_line();
-		}
-
-		token_stream(const token_stream& ts) : in(ts.in.rdbuf()), curln(ts.curln), curcol(ts.curcol), clineb(ts.clineb) {}
-		
-		const token_stream& operator =(const token_stream& ots) {
-			in.rdbuf(ots.in.rdbuf());
-			curln = ots.curln;
-			curcol = ots.curcol;
-			clineb = ots.clineb;
-			return *this;
+		token_stream(istream& i) : curln(0), curcol(0) {
+			string s;
+			while (i.good()) {
+				getline(i, s);
+				lines.push_back(s);
+			}
 		}
 
 		token next() {
@@ -115,7 +103,7 @@ namespace urn {
 			return get(offset).first;
 		}
 		bool more() {
-			return curcol < clineb.size() || in.good();
+			return curln < lines.size() && curcol < lines[curln].size();
 		}
 
 		//void expect(token::tktype t, const string& v = "");
