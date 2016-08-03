@@ -40,6 +40,11 @@ namespace plu {
 				return object->hit(r, hr);
 			}
 
+			//check if ray intersects node aabb
+			if(!bounds.hit(r)) {
+				return false;
+			}
+
 			//create hr for each side so they can be compared
 			hit_record lhr, rhr;
 
