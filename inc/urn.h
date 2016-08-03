@@ -85,7 +85,7 @@ namespace urn {
 			}
 		}
 	public:
-		token_stream(istream& i) : curln(0), curcol(0) {
+		token_stream(istream&& i) : curln(0), curcol(0) {
 			string s;
 			while (i.good()) {
 				getline(i, s);
