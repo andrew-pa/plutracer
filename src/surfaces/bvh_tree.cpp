@@ -41,7 +41,7 @@ namespace plu {
 			}
 
 			//check if ray intersects node aabb
-			if(bounds.hit() == false) {
+			if(!bounds.hit(r)) {
 				return false;
 			}
 
