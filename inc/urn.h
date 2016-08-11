@@ -205,6 +205,7 @@ public:
 		// get a named value out of a block
 		// calling named_block_val("a") on the block '[a: 3 b: 7]' will return the value 3
 		value named_block_val(const string& nm) const;
+		bool has_block_val_named(const string& nm) const;
 
 		inline value operator[](size_t ix) const {
 			if (!(type == Block || type == Group)) throw runtime_error("expected value of type Block or Group");

@@ -186,6 +186,13 @@ namespace urn {
 		});
 		return v == vs.end() ? value() : v->vs[0];
 	}
+	bool value::has_block_val_named(const string& nm) const {
+		auto vs = get<vector<value>>();
+		auto v = find_if(vs.begin(), vs.end(), [&nm](value v) {
+			return v.type == Def && *v.s == nm;
+		});
+		return v != vs.end();
+	}
 
 	value eval_context::eval1(const value& v) { //resolve var/val/defs while retaining blocks as unevaluated
 		switch (v.type) {

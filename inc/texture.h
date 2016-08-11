@@ -37,7 +37,11 @@ namespace plu {
 		texture2d(const string& bmp_filename);
 
 		// gets a pixel value from the texture, must be in [0, size)
-		inline vec3& pixel(uvec2 c) const
+		inline const vec3& pixel(uvec2 c) const
+		{
+			return _pixels[c.x + c.y*size.x];
+		}
+		inline vec3& pixel(uvec2 c)
 		{
 			return _pixels[c.x + c.y*size.x];
 		}

@@ -15,16 +15,12 @@ namespace plu {
 	}
 
 	void renderer::render(shared_ptr<texture2d> target) const {
-		//generate a queue of tiles that need to be rendered
-		queue<uvec2> tiles;
-		for(uint32_t y = 0; y < target->size.y; y += tile_size.y) {
-			for(uint32_t x = 0; x < target->size.x; x += tile_size.x) {
-				tiles.push(uvec2(x,y));
-			}
-		}
+		//vec2 inv_size = 1.f / (vec2)target->size;
+		float smp_wgt = 1.f / (float)(main_sampler->sample_count.x*main_sampler->sample_count.y);
 
-		vec2 inv_size = 1.f / (vec2)target->size;
-		float inv_ssq = 1.f / (float)num_samples_sq;
+		// obtain subsamplers that represent each tile to be rendered
+		auto tiles = main_sampler->samplers_for_tiles(tile_size);
+		size_t next_tile_index = 0;
 
 		mutex tile_qu_mutex;
 		mutex stdout_mutex;
@@ -33,18 +29,28 @@ namespace plu {
 			workers.push_back(thread([&](){
 				uint64_t tiles_rendered = 0;
 				auto start = chrono::high_resolution_clock::now();
+				vector<sample> smps; ray r;
 				while(true) {
-					uvec2 tile;
+					size_t I; // acquire the index of a tile to render
 					{
 						tile_qu_mutex.lock();
-						if (tiles.empty()) {
+						if (next_tile_index >= tiles.size()) {
 							tile_qu_mutex.unlock();
 							break;
 						}
-						tile = tiles.front(); tiles.pop();
+						I = next_tile_index++;
 						tile_qu_mutex.unlock();
 					}
-					render_tile(target, inv_size, inv_ssq, tile);
+
+					// loop through all of this tile's samples
+					while (tiles[I]->generate_samples(smps)) {
+						for (const auto& s : smps) {
+							// accumulate sample colors
+							cam.generate_ray(r, s);
+							target->pixel(floor(s.px)) += ray_color(r) * smp_wgt;
+						}
+					}
+
 					tiles_rendered++;
 				}
 				auto end = chrono::high_resolution_clock::now();
@@ -58,21 +64,5 @@ namespace plu {
 		}
 
 		for(auto& t : workers) t.join(); //block until render finishes for convenience
-	}
-
-	void renderer::render_tile(shared_ptr<texture2d> target, vec2 inv_size, float inv_ssq, uvec2 pos) const {
-		for (uint32_t y = pos.y; y < pos.y+tile_size.y && y < target->size.y; ++y) {
-			for (uint32_t x = pos.x; x < pos.x+tile_size.x && x < target->size.x; ++x) {
-				//vec2 uv = (vec2(x,y) - ((vec2)target->size * .5f)) / target->size*2;
-				vec2 uv = (vec2(x, y)*inv_size)*2.f - 1.f;
-				vec3 col = vec3(0.f);
-				for(uint32_t dy = 0; dy < num_samples_sq; ++dy)
-					for (uint32_t dx = 0; dx < num_samples_sq; ++dx) {
-						vec2 p = uv + ((vec2(dx, dy)*inv_ssq)*2.f - 1.f)*inv_size;
-						col += ray_color(cam.generate_ray(p));
-					}
-				target->pixel(uvec2(x, y)) = col * inv_ssq * inv_ssq;
-			}
-		}
 	}
 }

@@ -4,6 +4,7 @@ camera: [
 	position:	[2 4 -5]
 	target:		[0 0 0]
 	up:		[0 1 0]
+	lens: [ radius: 0.1 focal-distance: 5 ]
 ]
 materials: [
 	green: [ diffuse [0.1 0.7 0.2] ]
@@ -15,4 +16,4 @@ objects: [
 	sphere [1.4 1.1 0] 1 'green
 	sphere [-1.4 1.1 0] 1 'red
 	sphere [0 1.1 1.4] 1 [ diffuse texture [ grid [ 0.1 0.1 0.1 ] [ 0.6 0.1 0.3 ] 8 0.1 ] ] 
-] ]
+]] 

@@ -40,13 +40,19 @@ namespace plu {
 	{
 	public:
 		vec3 e, d;
-		ray(vec3 _e, vec3 _d)
+		ray(vec3 _e = vec3(0.f), vec3 _d = vec3(0.f))
 			: e(_e), d(_d) {}
 
 		// calculate the position along the ray at t
 		inline vec3 operator ()(float t) const
 		{
 			return e + d*t;
+		}
+
+		// transform this ray by a 4x4 matrix transform
+		inline void transform(const mat4& m) {
+			e = (m*vec4(e, 1.f)).xyz;
+			d = (m*vec4(d, 0.f)).xyz;
 		}
 	};
 
@@ -222,4 +228,39 @@ namespace plu {
 			surf = s;
 		}
 	};
+
+
+	namespace rnd {
+		static mt19937 RNG = mt19937(random_device()());
+
+		inline float randf() {
+			uniform_real_distribution<float> dist;
+			return dist(RNG);
+		}
+
+		inline vec2 randf2() {
+			uniform_real_distribution<float> D;
+			return vec2(D(RNG), D(RNG));
+		}
+
+		inline vec2 concentric_disk_map(vec2 u) {
+			vec2 rt;
+			u = 2.f*u - 1.f;
+			if (u.x == 0.f && u.y == 0.f) return vec2(0.f);
+			if (u.x >= -u.y) {
+				if (u.x > u.y)
+					rt = vec2(u.x, u.y > 0.f ? u.y / u.x : 8.f + u.y / u.x);
+				else
+					rt = vec2(u.y, 2.f - u.x / u.y);
+			}
+			else {
+				if (u.x <= u.y)
+					rt = vec2(-u.x, 4.f - u.y / u.x);
+				else
+					rt = vec2(-u.y, 6.f - u.x / u.y);
+			}
+			rt.y *= pi<float>()*.25f;
+			return vec2(cos(rt.y), sin(rt.y))*rt.x;
+		}
+	}
 }

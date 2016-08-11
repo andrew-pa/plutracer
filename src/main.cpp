@@ -4,6 +4,7 @@
 #include "renderer.h"
 #include "surfaces/surfaces.h"
 #include "textures/textures.h"
+#include "sampler.h"
 
 #include "urn.h"
 #include <fstream>
@@ -174,7 +175,14 @@ int main(int argc, char* argv[]) {
 	shared_ptr<plu::texture2d> tx = make_shared<plu::texture2d>( resolution );
 
 	auto cam_b = scene_tlv.named_block_val("camera");
-	auto cam = plu::camera(bk2v3(cam_b.named_block_val("position")), bk2v3(cam_b.named_block_val("target")));
+	vec2 dof_settings;
+	if (cam_b.has_block_val_named("lens")) {
+		auto lens_b = cam_b.named_block_val("lens");
+		dof_settings.x = lens_b.named_block_val("radius").get_num();
+		dof_settings.y = lens_b.named_block_val("focal-distance").get_num();
+	}
+	auto cam = plu::camera(bk2v3(cam_b.named_block_val("position")), bk2v3(cam_b.named_block_val("target")),
+		tx->size, dof_settings.x, dof_settings.y);
 
 	auto smp_cnt = scene_tlv.named_block_val("antialiasing-samples").get<int64_t>();
 	
@@ -212,7 +220,8 @@ int main(int argc, char* argv[]) {
 
 	auto s = //new plu::group(surfs);
 		new plu::surfaces::bvh_tree(surfs);
-	plu::renderer r(s, cam, uvec2(64), smp_cnt);
+	auto sampler = new plu::samplers::stratified_sampler(tx->size, uvec2(smp_cnt), true);
+	plu::renderer r(s, cam, uvec2(32), sampler);
 	
 	auto init_end = chrono::high_resolution_clock::now();
 
@@ -243,7 +252,7 @@ int main(int argc, char* argv[]) {
 	tx->write_bmp(fns.str()); //write to image.bmp
 	getchar();
 
-	delete s;
+	delete s, sampler;
 
 	return 0;
 }
