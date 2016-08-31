@@ -1,4 +1,4 @@
-[ resolution: [1280 960]
+[ resolution: [640 480]
 antialiasing-samples: 16
 camera: [
 	position:	[2 4 -5]
@@ -12,6 +12,7 @@ materials: [
 	checkerboard: [ diffuse texture [ checkerboard [0 0 0] [1 1 1] 8 ] ]
 ]
 objects: [
+	point-light [0 5 0] [25 25 25]
 	box [0 0 0] [5 0.1 5] 'checkerboard
 	sphere [1.4 1.1 0] 1 'green
 	sphere [-1.4 1.1 0] 1 'red

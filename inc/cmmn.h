@@ -220,12 +220,14 @@ namespace plu {
 		// the surface that got hit by the ray
 		struct surface const * surf;
 
+		vec3 dpdu, dpdv; // partial derivitives of the position with respect to (u,v) along its surface
+
 		hit_record() : t(100000.f) {}
 
 		// convience function that sets the hit_record's values in place
-		inline void set(struct surface const * s, float _t, vec3 n, vec2 tc) {
+		inline void set(struct surface const * s, float _t, vec3 n, vec2 tc, vec3 dpdu_ = vec3(0), vec3 dpdv_ = vec3(0)) {
 			t = _t; normal = n; texture_coords = tc;
-			surf = s;
+			surf = s; dpdu = dpdu_; dpdv = dpdv_;
 		}
 	};
 
@@ -243,7 +245,7 @@ namespace plu {
 			return vec2(D(RNG), D(RNG));
 		}
 
-		inline vec2 concentric_disk_map(vec2 u) {
+		inline vec2 concentric_disk_sample(vec2 u) {
 			vec2 rt;
 			u = 2.f*u - 1.f;
 			if (u.x == 0.f && u.y == 0.f) return vec2(0.f);
@@ -261,6 +263,29 @@ namespace plu {
 			}
 			rt.y *= pi<float>()*.25f;
 			return vec2(cos(rt.y), sin(rt.y))*rt.x;
+		}
+
+		inline vec3 uniform_hemisphere_sample(vec2 u) {
+			float r = sqrt(glm::max(0.f, 1.f - u.x*u.x));
+			float phi = 2.f*pi<float>()*u.y;
+			return vec3(r*cos(phi),r*sin(phi),u.x);	
+		}
+		inline float uniform_hemisphere_pdf() { return one_over_two_pi<float>(); }
+
+		inline vec3 uniform_sphere_sample(vec2 u) {
+			float z = 1.f - 2.f*u.x;
+			float r = sqrt(glm::max(0.f, 1.f - z*z));
+			float phi = 2.f*pi<float>()*u.y;
+			return vec3(r*cos(phi), r*sin(phi), z);
+		}
+		inline float uniform_sphere_pdf() { return one_over_two_pi<float>()*.5f; }
+
+		inline vec3 cosine_hemisphere_sample(vec2 u) {
+			vec2 d = concentric_disk_sample(u);
+			return vec3(d, sqrt(glm::max(0.f, 1.f - dot(d,d))));
+		}
+		inline float cosine_hemisphere_pdf(float costheta) {
+			return costheta * one_over_pi<float>();
 		}
 	}
 }

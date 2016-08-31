@@ -5,6 +5,7 @@
 #include "surfaces/surfaces.h"
 #include "textures/textures.h"
 #include "sampler.h"
+#include "light.h"
 
 #include "urn.h"
 #include <fstream>
@@ -62,6 +63,44 @@ namespace plu {
 			aabb tb;
 			for (const auto& s : surfaces) tb.add_aabb(s->bounds());
 			return tb;
+		}
+	};
+
+	//this needs help
+	struct postprocesser {
+		vec3 whitePreservingLumaBasedReinhardToneMapping(vec3 color)
+		{
+			float white = 2.f;
+			float luma = dot(color, vec3(0.2126f, 0.7152f, 0.0722f));
+			float toneMappedLuma = luma * (1.f + luma / (white*white)) / (1.f + luma);
+			color *= toneMappedLuma / luma;
+			color = pow(color, vec3(1.f / 2.2f));
+			return color;
+		}
+
+		void postprocess(shared_ptr<texture2d> rt) {
+			vector<thread> workers; mutex scanline_mutex; uint32_t next_scanline = 0;
+			for (int i = 0; i < thread::hardware_concurrency(); ++i) {
+				workers.push_back(thread([&]{
+					while (true) {
+						uint32_t scanline;
+						scanline_mutex.lock();
+						{
+							scanline = next_scanline++;
+							if (scanline >= rt->size.y) {
+								scanline_mutex.unlock();
+								break;
+							}
+						}
+						scanline_mutex.unlock();
+						for (uint32_t x = 0; x < rt->size.x; ++x) {
+							auto c = rt->pixel(uvec2(x, scanline));
+							rt->pixel(uvec2(x, scanline)) = whitePreservingLumaBasedReinhardToneMapping(c);
+						}
+					}
+				}));
+			}
+			for (auto& t : workers) t.join();
 		}
 	};
 }
@@ -129,11 +168,10 @@ inline shared_ptr<plu::material> make_material(urn::eval_context& cx, const urn:
 			c = plu::props::color(bk2v3(cx, vs[1]));
 		}
 		else throw;
-		return make_shared<plu::material>(c);
+		return make_shared<plu::materials::diffuse_material>(c);
 	}
 	else throw;
 }
-
 
 int main(int argc, char* argv[]) {
 	vector<string> args; for (int i = 1; i < argc; ++i) args.push_back(argv[i]);
@@ -188,6 +226,7 @@ int main(int argc, char* argv[]) {
 	
 	map<string, shared_ptr<plu::material>> mats;
 	vector<shared_ptr<plu::surface>> surfs;
+	vector<shared_ptr<plu::light>> lights;
 
 
 	urn::eval_context cx;
@@ -216,12 +255,17 @@ int main(int argc, char* argv[]) {
 			surfs.push_back(make_shared<plu::surfaces::box>(bk2v3(cx, objvs[i + 1]), bk2v3(cx, objvs[i + 2]), M));
 			i += 4;
 		}
+		else if (ot == "point-light") {
+			lights.push_back(make_shared<plu::lights::point_light>(bk2v3(cx,objvs[i+1]),bk2v3(cx,objvs[i+2])));
+			i += 3;
+		}
 	}
 
 	auto s = //new plu::group(surfs);
 		new plu::surfaces::bvh_tree(surfs);
 	auto sampler = new plu::samplers::stratified_sampler(tx->size, uvec2(smp_cnt), true);
 	plu::renderer r(s, cam, uvec2(32), sampler);
+	r.lights = lights;
 	
 	auto init_end = chrono::high_resolution_clock::now();
 
@@ -229,13 +273,20 @@ int main(int argc, char* argv[]) {
 	r.render(tx);
 	auto render_end = chrono::high_resolution_clock::now();
 
+	auto pp_start = chrono::high_resolution_clock::now();
+	plu::postprocesser pp;
+	pp.postprocess(tx);
+	auto pp_end = chrono::high_resolution_clock::now();
+
 	auto init_time = chrono::duration_cast<chrono::milliseconds>(init_end - init_start); // convert to milliseconds b/c humans are bad at big numbers
 	auto render_time = chrono::duration_cast<chrono::milliseconds>(render_end - render_start);
+	auto pp_time = chrono::duration_cast<chrono::milliseconds>(pp_end - pp_start);
 	ostringstream watermark;
 	watermark
 		<< "scene: " << args[0] << endl
 		<< "init took: " << init_time.count() << "ms" << endl
-		<< "render took: " << render_time.count() << "ms" << endl;
+		<< "render took: " << render_time.count() << "ms" << endl
+		<< "postprocess took: " << pp_time.count() << "ms" << endl;
 #ifdef _DEBUG
 	watermark << "DEBUG" << endl;
 #else

@@ -1,14 +1,31 @@
 #pragma once
 #include "cmmn.h"
-#include "camera.h"
+#include <array>
 
 namespace plu {
-
 	struct sample {
 		vec2 px;
 		vec2 lens;
+		std::array<float, 64> floats;
+		size_t next_float;
 
-		sample(vec2 image_coord = vec2(0.f)) : px(image_coord) {}
+		inline float next() {
+			if (next_float < floats.size()) {
+				return floats[next_float++];
+			}
+			else {
+				return rnd::randf();
+			}
+		}
+		inline vec2 next_vec2() {
+			return vec2(next(), next());
+		}
+		inline vec3 next_vec3() {
+			return vec3(next(), next(), next());
+		}
+
+
+		sample(vec2 image_coord = vec2(0.f)) : px(image_coord), next_float(0) {}
 	};
 
 	struct sampler {
@@ -49,6 +66,10 @@ namespace plu {
 				stratified_sample_2d(sample_count, jitter_samples, [&smp, this](size_t i, vec2 s) {
 					smp[i].lens = s;
 				});
+				for(size_t i = 0; i < smp.size(); ++i)
+					for (size_t j = 0; j < 64; ++j)
+						smp[i].floats[j] = rnd::randf();
+				
 
 				pos.x++;
 				if (pos.x > start_pos.x+dims.x) {

@@ -28,7 +28,7 @@ namespace plu {
 			r.e = pos;
 			r.d = normalize(w*look + uv.x*right + uv.y*up);
 			if (lens_radius > 0.f) {
-				vec2 l = rnd::concentric_disk_map(smp.lens)*lens_radius;
+				vec2 l = rnd::concentric_disk_sample(smp.lens)*lens_radius;
 				vec3 pof = r(focal_distance / r.d.z);
 				r.e.xy += l;
 				r.d = normalize(pof - r.e);

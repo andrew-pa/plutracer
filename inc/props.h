@@ -21,7 +21,7 @@ namespace plu {
 			// 	additionally i don't think it makes much sense to support any other type, 
 			// 	except perhaps a vec2->vec4 texture, but then it's not just a color prop, its a color-opacity prop
 
-			vec3 operator() (const hit_record& hr) {
+			vec3 operator() (const hit_record& hr) const {
 				if(tex != nullptr) {
 					return tex->texel(hr.texture_coords);
 				} else {

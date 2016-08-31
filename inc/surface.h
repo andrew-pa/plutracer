@@ -1,16 +1,8 @@
 #pragma once
 #include "cmmn.h"
-
-#include "props.h"
+#include "material.h"
 
 namespace plu {
-
-	// this is preliminary and should probably get it's own header soon
-	struct material {
-		props::color diffuse;
-		material(props::color df) : diffuse(df) {}
-	};
-	
 	struct surface {
 		// does ray r intersect this surface?
 		// should return false if the ray does not intersect the surface

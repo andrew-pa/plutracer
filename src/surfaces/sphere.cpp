@@ -29,11 +29,18 @@ namespace plu {
 				// this code calculates the texture coords on the sphere, basically these tell it where to sample the texture that is "wrapped" around the sphere
 				// essetially this code converts the intersection point to polar coords but also does some stuff to make it more continuous or something
 				// honestly I copy-pasta'd this from somewhere
-				float phi = acosf(-dot(hr->normal, vec3(0,1,0)));
+				float cos_phi = -dot(hr->normal, vec3(0, 1, 0));
+				float phi = acosf(cos_phi);
+				float sin_phi = sin(phi);
 				hr->texture_coords.y = phi * one_over_pi<float>();
-				float theta = acosf(dot(vec3(0,0,-1), hr->normal)/sinf(phi)) * two_over_pi<float>();
+				float theta = acosf(dot(vec3(0,0,-1), hr->normal)/sin_phi) * two_over_pi<float>();
 				if(dot(vec3(1,0,0), hr->normal) >= 0) theta = 1.f - theta;
 				hr->texture_coords.x = theta;	
+
+				auto p = r(i1);
+				hr->dpdu = vec3(-2.f*pi<float>()*p.y, 2.f*pi<float>()*p.x, 0);
+				hr->dpdv = vec3(p.z*cos_phi, p.z*sin_phi, -radius*sin(theta));
+
 				hr->surf = this;
 				return true;
 			}

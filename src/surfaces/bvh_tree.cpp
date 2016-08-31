@@ -59,7 +59,7 @@ namespace plu {
 			if (lhit == false) {
 				if (hr == nullptr)
 					return true;
-				hr->set(rhr.surf, rhr.t, rhr.normal, rhr.texture_coords);
+				*hr = rhr;
 				return true;
 			}
 
@@ -67,7 +67,7 @@ namespace plu {
 			if (rhit == false) {
 				if (hr == nullptr)
 					return true;
-				hr->set(lhr.surf, lhr.t, lhr.normal, lhr.texture_coords);
+				*hr = lhr;
 				return true;
 			}
 
@@ -76,11 +76,11 @@ namespace plu {
 				return true;
 			//set hr to closest hit
 			if (lhr.t < rhr.t) {
-				hr->set(lhr.surf, lhr.t, lhr.normal, lhr.texture_coords);
+				*hr = lhr;
 				return true;
 			}
 
-			hr->set(rhr.surf, rhr.t, rhr.normal, rhr.texture_coords);
+			*hr = rhr;
 			return true;
 		}
 	}
