@@ -46,7 +46,7 @@ namespace plu {
 
 	vec3 renderer::uniform_sample_one_light(sample& smp, vec3 p, vec3 n, vec3 wo, bsdf& b) const {
 		//pick the light
-		auto l = lights[(size_t)floor(smp.next()*(lights.size()-1))];
+		auto l = lights[(size_t)glm::min(floor(smp.next()*(float)lights.size()),(float)lights.size()-1.f)];
 		return (float)lights.size() * estimate_direct_light(smp, p, n, wo, b, l.get(), bxdf::type(bxdf::all & ~bxdf::specular));
 	}
 

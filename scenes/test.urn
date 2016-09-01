@@ -1,20 +1,20 @@
-[ resolution: [640 480]
-antialiasing-samples: 16
+[ resolution: [1280 960]
+antialiasing-samples: 8
 camera: [
 	position:	[2 4 -5]
 	target:		[0 0 0]
 	up:		[0 1 0]
-	lens: [ radius: 0.1 focal-distance: 5 ]
+	lens: [ radius: 0.05 focal-distance: 5 ]
 ]
 materials: [
-	green: [ diffuse [0.1 0.7 0.2] ]
+	green: [ glass [0.1 0.7 0.2] 1.4 ]
 	red: [ diffuse [0.7 0.2 0.1] ]
-	checkerboard: [ diffuse texture [ checkerboard [0 0 0] [1 1 1] 8 ] ]
+	checkerboard: [ diffuse texture [ checkerboard [0 0 0] [1 1 1] 4 ] ]
 ]
 objects: [
-	point-light [0 5 0] [25 25 25]
+	point-light [0 5 0] [22 22 22]
 	box [0 0 0] [5 0.1 5] 'checkerboard
-	sphere [1.4 1.1 0] 1 'green
-	sphere [-1.4 1.1 0] 1 'red
-	sphere [0 1.1 1.4] 1 [ diffuse texture [ grid [ 0.1 0.1 0.1 ] [ 0.6 0.1 0.3 ] 8 0.1 ] ] 
+	sphere [1.5 1.2 0] 1 'green
+	sphere [-1.5 1.2 0] 1 'red
+	sphere [0 1.2 1.5] 1 [ diffuse texture [ grid [ 0.1 0.1 0.1 ] [ 0.6 0.1 0.3 ] 8 0.1 ] ] 
 ]] 

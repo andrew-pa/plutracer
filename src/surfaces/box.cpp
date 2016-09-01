@@ -26,7 +26,11 @@ namespace plu {
 			if(tmin > hr->t) return false;
 			vec3 p = r(tmin);
 			vec3 n = get_normal(p);
-			hr->set(this, tmin, n, vec2(p.x, p.z), vec3(1.f, 0.f, 0.f), vec3(0.f, 0.f, 1.f));
+			int mci = 0; for (int i = 0; i < 3; ++i) if (n[i] != 0.f) mci = i;
+			vec3 dpdu, dpdv;
+			dpdu[(mci - 1) % 3] = 1.f;
+			dpdv[(mci + 1) % 3] = 1.f;
+			hr->set(this, tmin, n, vec2(p[(mci-1)%3], p[(mci+1)%3]), dpdu, dpdv);
 			return true;
 		}
 

@@ -139,36 +139,68 @@ objects: do [
 ]
 */
 
+/*
+	+ more lights
+		- area lights
+		- inf area lights
+	+ more materials
+		- Cook-Torrance
+		- Ashikhmin&Shirley
+		- Disney
+	+ real stratified samples
+	+ fix the box so that it can be used on all sides
+	+ speed
+*/
+
+inline plu::props::color make_color(urn::eval_context& cx, const vector<urn::value>& vs, int& i) {
+	if (vs[i].type == urn::value::Var) {
+		if (vs[i].get_var() == "texture") {
+			i++;
+			auto ts = vs[i].get<vector<urn::value>>(); i++;
+			auto t = ts[0].get_var();
+			if (t == "checkerboard") {
+				return plu::props::color(
+					make_shared<plu::textures::checkerboard_texture>(bk2v3(cx, ts[1]), bk2v3(cx, ts[2]), cx.eval(ts[3]).get_num()));
+			}
+			else if (t == "grid") {
+				return plu::props::color(
+					make_shared<plu::textures::grid_texture>(bk2v3(cx, ts[1]), bk2v3(cx, ts[2]), cx.eval(ts[3]).get_num(), cx.eval(ts[4]).get<double>()));
+			}
+			else if (t == "img") {
+				return plu::props::color(
+					make_shared<plu::texture2d>(ts[1].get<string>()));
+			}
+			else throw;
+
+		} else throw;
+	}
+	else if (vs[i].type == urn::value::Block) {
+		return plu::props::color(bk2v3(cx, vs[i++]));
+	}
+	else throw;
+}
+
 inline shared_ptr<plu::material> make_material(urn::eval_context& cx, const urn::value& v) {
 	auto vs = v.get<vector<urn::value>>();
 	if (vs[0].get_var() == "diffuse") {
-		plu::props::color c = plu::props::color(vec3(0.f));
-		if (vs[1].type == urn::value::Var) {
-			if (vs[1].get_var() == "texture") {
-				
-				auto ts = vs[2].get<vector<urn::value>>();
-				auto t = ts[0].get_var();
-				if (t == "checkerboard") {
-					c = plu::props::color(
-						make_shared<plu::textures::checkerboard_texture>(bk2v3(cx, ts[1]), bk2v3(cx, ts[2]), cx.eval(ts[3]).get_num()));
-				}
-				else if (t == "grid") {
-					c = plu::props::color(
-						make_shared<plu::textures::grid_texture>(bk2v3(cx, ts[1]), bk2v3(cx, ts[2]), cx.eval(ts[3]).get_num(), cx.eval(ts[4]).get<double>()));
-				}
-				else if (t == "img") {
-					c = plu::props::color(
-						make_shared<plu::texture2d>(ts[1].get<string>()));
-				}
-				else throw;
-
-			} else throw;
-		}
-		else if (vs[1].type == urn::value::Block) {
-			c = plu::props::color(bk2v3(cx, vs[1]));
-		}
-		else throw;
-		return make_shared<plu::materials::diffuse_material>(c);
+		int i = 1;
+		return make_shared<plu::materials::diffuse_material>(make_color(cx, vs, i));
+	}
+	else if (vs[0].get_var() == "perfect-reflection") {
+		int i = 1;
+		auto c = make_color(cx, vs, i);
+		auto e = bk2v3(cx, vs[i++]), k = bk2v3(cx, vs[i++]);
+		return make_shared<plu::materials::perfect_reflection_material>(c,e,k);
+	}
+	else if (vs[0].get_var() == "perfect-refraction") {
+		int i = 1;
+		auto c = make_color(cx, vs, i);
+		return make_shared<plu::materials::perfect_refraction_material>(c, vs[i].get_num(), vs[i + 1].get_num());
+	}
+	else if (vs[0].get_var() == "glass") {
+		int i = 1;
+		auto c = make_color(cx, vs, i);
+		return make_shared<plu::materials::glass_material>(c, vs[i].get_num());
 	}
 	else throw;
 }
