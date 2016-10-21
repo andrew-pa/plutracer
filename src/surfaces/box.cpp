@@ -26,7 +26,7 @@ namespace plu {
 			if(tmin > hr->t) return false;
 			vec3 p = r(tmin);
 			vec3 n = get_normal(p);
-			int mci = 0; for (int i = 0; i < 3; ++i) if (n[i] != 0.f) mci = i;
+			uint mci = 0; for (int i = 0; i < 3; ++i) if (n[i] != 0.f) mci = i;
 			vec3 dpdu, dpdv;
 			dpdu[(mci - 1) % 3] = 1.f;
 			dpdv[(mci + 1) % 3] = 1.f;

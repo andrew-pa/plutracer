@@ -3,7 +3,6 @@
 #include "memory.h"
 #include "props.h"
 #include "sampler.h"
-#include "light.h"
 
 namespace plu {
 	namespace util {
@@ -165,7 +164,7 @@ namespace plu {
 		}
 		bsdf(initializer_list<bxdf*> l) : bsdf(vector<bxdf*>(l.begin(), l.end())) {}
 		inline bsdf& complete(const hit_record& hr) {
-			N = hr.normal;
+			N = hr.norm;
 			S = normalize(hr.dpdu);
 			T = cross(N, S);
 			return *this;
@@ -190,15 +189,13 @@ namespace plu {
 		vec3 sampleF(sample& smp, vec3 n, vec3 wwo, vec3* wwi, float* pdf, bxdf::type types, bxdf::type* sampled_type = nullptr) const;
 		float pdf(vec3 wo, vec3 wi, bxdf::type t) const;
 	};
-
+	
+	namespace lights { struct area_light; }
 	struct material {
 
 		virtual bsdf operator()(const hit_record& hr, memory::arena& ma) const = 0;
-		virtual light* area_light() const { return nullptr; }
-		virtual vec3 Le(vec3 p, vec3 n, vec3 v) const {
-			auto l = area_light();
-			return vec3(0.f);//l ? l->L(p, n, v) : vec3(0.f);
-		}
+		virtual lights::area_light* area_light() const { return nullptr; }
+		vec3 Le(vec3 p, vec3 n, vec3 v) const;
 	};
 
 	namespace materials {

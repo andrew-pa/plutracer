@@ -24,17 +24,17 @@ namespace plu {
 				if(hr == nullptr) return true; // were we just quering for hit test and don't care about surface normals and such?
 				if(hr->t < i1) return false; // did it turn out that this ray has already hit something closer? if so than we didn't really hit this sphere
 				hr->t = i1; // store the point along the ray where the sphere got hit
-				hr->normal = normalize(r(i1) - center); // calculate the surface normal at this point, simpily by normalizing the vector between the surface point and the center of the sphere
+				hr->norm = normalize(r(i1) - center); // calculate the surface normal at this point, simpily by normalizing the vector between the surface point and the center of the sphere
 				
 				// this code calculates the texture coords on the sphere, basically these tell it where to sample the texture that is "wrapped" around the sphere
 				// essetially this code converts the intersection point to polar coords but also does some stuff to make it more continuous or something
 				// honestly I copy-pasta'd this from somewhere
-				float cos_phi = -dot(hr->normal, vec3(0, 1, 0));
+				float cos_phi = -dot(hr->norm, vec3(0, 1, 0));
 				float phi = acosf(cos_phi);
 				float sin_phi = sin(phi);
 				hr->texture_coords.y = phi * one_over_pi<float>();
-				float theta = acosf(dot(vec3(0,0,-1), hr->normal)/sin_phi) * two_over_pi<float>();
-				if(dot(vec3(1,0,0), hr->normal) >= 0) theta = 1.f - theta;
+				float theta = acosf(dot(vec3(0,0,-1), hr->norm)/sin_phi) * two_over_pi<float>();
+				if(dot(vec3(1,0,0), hr->norm) >= 0) theta = 1.f - theta;
 				hr->texture_coords.x = theta;	
 
 				auto p = r(i1);

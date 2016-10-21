@@ -198,8 +198,11 @@ namespace plu {
 		{
 			return (_min + _max) * 1.f / 2.f;
 		}
+		inline vec3 extents() const {
+			return _max - _min;
+		}
 
-		inline float surface_area() {
+		inline float surface_area() const {
 			vec3 d = _max - _min;
 			return 2.f * (d.x * d.y + d.x * d.z + d.y * d.z);
 		}
@@ -215,7 +218,7 @@ namespace plu {
 	struct hit_record {
 		// distance along the ray at which the intersection occured
 		float t;
-		vec3 normal;
+		vec3 norm;
 		vec2 texture_coords;
 		// the surface that got hit by the ray
 		struct surface const * surf;
@@ -226,7 +229,7 @@ namespace plu {
 
 		// convience function that sets the hit_record's values in place
 		inline void set(struct surface const * s, float _t, vec3 n, vec2 tc, vec3 dpdu_ = vec3(0), vec3 dpdv_ = vec3(0)) {
-			t = _t; normal = n; texture_coords = tc;
+			t = _t; norm = n; texture_coords = tc;
 			surf = s; dpdu = dpdu_; dpdv = dpdv_;
 		}
 	};

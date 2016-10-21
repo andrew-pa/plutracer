@@ -8,14 +8,20 @@ namespace plu {
 		vec3 wi; float light_pdf, bsdf_pdf; ray r;
 		vec3 Li = l->sampleL(p, smp, &wi, &light_pdf, &r);
 		if (light_pdf > 0.f && dot(Li, Li) > 0.f) {
+			//if (b.num_components > 0)
+			//	cout << "";
 			vec3 f = b.F(n, wo, wi, t);
-			if (dot(f, f) > 0.f && !scene->hit(r, nullptr)) {
-				//add light's contribution to reflected radiance
-				if (l->is_delta()) Ld += f * Li * (abs(dot(wi, n)) / light_pdf);
-				else {
-					bsdf_pdf = b.pdf(wo, wi, t);
-					float w = (bsdf_pdf*bsdf_pdf) / (bsdf_pdf*bsdf_pdf + light_pdf*light_pdf);
-					Ld += f * Li * (abs(dot(wi, n))*w / light_pdf);
+			if (dot(f, f) > 0.f) {
+				hit_record light_hr;
+				bool intersection_on_wi = scene->hit(r, &light_hr);
+				if (!intersection_on_wi || (!l->is_delta() && (light*)light_hr.surf->mat->area_light() == l)) {
+					//add light's contribution to reflected radiance
+					if (l->is_delta()) Ld += f * Li * (abs(dot(wi, n)) / light_pdf);
+					else {
+						bsdf_pdf = b.pdf(wo, wi, t);
+						float w = (bsdf_pdf*bsdf_pdf) / (bsdf_pdf*bsdf_pdf + light_pdf*light_pdf);
+						Ld += f * Li * (abs(dot(wi, n))*w / light_pdf);
+					}
 				}
 			}
 		}
@@ -33,7 +39,7 @@ namespace plu {
 				//add light contribution from BSDF sampling
 				hit_record lihr; r = ray(p, wi);
 				if (scene->hit(r, &lihr)) {
-					if (lihr.surf->mat->area_light() == l) Li = lihr.surf->mat->Le(p,n,-wi);
+					if ((light*)lihr.surf->mat->area_light() == l) Li = lihr.surf->mat->Le(p,n,-wi);
 					else Li = l->Le(-wi);
 					if (dot(Li, Li) > 0.f) {
 						Ld += f * Li * abs(dot(wi, n)) * w / bsdf_pdf;
@@ -57,11 +63,13 @@ namespace plu {
 			bool spec_bounce = false; ray r = _r;
 			for (int bounces = 0;; bounces++) {
 				//add emited light at vertex
-				if (bounces == 0 || spec_bounce) L += path_throughput * hr.surf->mat->Le(r(hr.t),hr.normal,-r.d);
+				if (bounces == 0 || spec_bounce) L += path_throughput * hr.surf->mat->Le(r(hr.t),hr.norm,-r.d);
 				//sample illumination from lights to find path contribution
 				auto bsdf = (*hr.surf->mat)(hr, arena);
+				//if (bsdf.num_components > 0)
+				//	int i = 0;
 				const vec3& p = r(hr.t);
-				const vec3& n = hr.normal;
+				const vec3& n = hr.norm;
 				vec3 wo = -r.d;
 				L += path_throughput * uniform_sample_one_light(smp, p, n, -r.d, bsdf);
 				//sample BSDF to get new path direction

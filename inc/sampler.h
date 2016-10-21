@@ -6,7 +6,7 @@ namespace plu {
 	struct sample {
 		vec2 px;
 		vec2 lens;
-		std::array<float, 64> floats;
+		std::array<float, 256> floats;
 		size_t next_float;
 
 		inline float next() {
@@ -67,7 +67,7 @@ namespace plu {
 					smp[i].lens = s;
 				});
 				for(size_t i = 0; i < smp.size(); ++i)
-					for (size_t j = 0; j < 64; ++j)
+					for (size_t j = 0; j < smp[i].floats.size(); ++j)
 						smp[i].floats[j] = rnd::randf();
 				
 

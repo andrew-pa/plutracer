@@ -6,7 +6,7 @@ namespace plu {
 	struct light {
 		virtual float pdf(vec3 p, vec3 wi) const = 0;
 		virtual vec3 sampleL(vec3 p, sample& smp, vec3* wi, float* pdf, ray* v) const = 0;
-		virtual vec3 sampleL(vec3 p, sample& smp, ray* r, float* pdf) const = 0;
+		virtual vec3 sampleL(vec3 p, sample& smp, ray* r, vec3* n, float* pdf) const = 0;
 		virtual bool is_delta() const = 0;
 		virtual vec3 Le(const ray& r) { return vec3(0.f); }
 	};
@@ -22,11 +22,12 @@ namespace plu {
 				auto len2 = dot(l2p,l2p);
 				*wi = l2p / sqrt(len2);
 				*pdf = 1.f;
-				*v = ray(p + *wi*0.1f, *wi);
+				*v = ray(p, *wi);
 				return intensity / len2;
 			}
-			vec3 sampleL(vec3 p, sample& smp, ray* r, float* pdf) const override {
+			vec3 sampleL(vec3 p, sample& smp, ray* r, vec3* n, float* pdf) const override {
 				*r = ray(p, rnd::uniform_sphere_sample(smp.next_vec2()));
+				*n = normalize(r->d);
 				*pdf = rnd::uniform_sphere_pdf();
 				return intensity;
 			}

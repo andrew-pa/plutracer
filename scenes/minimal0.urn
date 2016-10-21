@@ -1,5 +1,5 @@
 [
-	resolution: [1280 960]
+	resolution: [640 480]
 	antialiasing-samples: 8
 	camera: [
 		position:	[4 5 -10]
@@ -9,7 +9,6 @@
 	materials: [
 	]
 	objects:  [
-		point-light [3 4 0] [20 20 20]
 		box [0 0 0] [5 0.1 5] [ diffuse [0.3 0.3 0.3] ]
 		sphere [0 1.2 0] 1 [ diffuse [0.01 0.0 0.4] ]
 	]

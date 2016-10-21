@@ -6,6 +6,7 @@
 #include "textures/textures.h"
 #include "sampler.h"
 #include "light.h"
+#include "lights/area_light.h"
 
 #include "urn.h"
 #include <fstream>
@@ -235,6 +236,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 
+	cout << "loading scene " << args[argi] << endl;
 	auto init_start = chrono::high_resolution_clock::now();
 
 	auto ts = urn::token_stream(ifstream(args[argi]));
@@ -291,7 +293,22 @@ int main(int argc, char* argv[]) {
 			lights.push_back(make_shared<plu::lights::point_light>(bk2v3(cx,objvs[i+1]),bk2v3(cx,objvs[i+2])));
 			i += 3;
 		}
+		/*else if (ot == "box-area-light") {
+			auto M = make_shared<
+			auto s = make_shared<plu::surfaces::box>(bk2v3(cx, objvs[i + 2]), bk2v3(cx, objvs[i + 3]), M);
+			lights.push_back(make_shared<plu::lights::diffuse_area_light>(bk2v3(cx,objvs[i+1]), 
+				
+		}*/
 	}
+
+
+	auto M = make_shared<plu::materials::emission_material>(nullptr);
+	auto sh = //make_shared<plu::surfaces::sphere>(vec3(-1.f, 4.9f, -1.f), 1.f, M);
+				make_shared<plu::surfaces::box>(vec3(-1.f, 4.9f, -1.f), vec3(1.f, .1f, 1.f), M);
+	auto L = make_shared<plu::lights::diffuse_area_light>(vec3(10000000.f), sh);
+	M->L = L;
+	lights.push_back(L);
+	surfs.push_back(sh);
 
 	auto s = //new plu::group(surfs);
 		new plu::surfaces::bvh_tree(surfs);
@@ -301,14 +318,17 @@ int main(int argc, char* argv[]) {
 	
 	auto init_end = chrono::high_resolution_clock::now();
 
+	cout << "rendering... " << endl;
 	auto render_start = chrono::high_resolution_clock::now();
 	r.render(tx);
 	auto render_end = chrono::high_resolution_clock::now();
 
+	cout << "postprocessing... " << endl;
 	auto pp_start = chrono::high_resolution_clock::now();
 	plu::postprocesser pp;
 	pp.postprocess(tx);
 	auto pp_end = chrono::high_resolution_clock::now();
+	cout << "... finished" << endl;
 
 	auto init_time = chrono::duration_cast<chrono::milliseconds>(init_end - init_start); // convert to milliseconds b/c humans are bad at big numbers
 	auto render_time = chrono::duration_cast<chrono::milliseconds>(render_end - render_start);

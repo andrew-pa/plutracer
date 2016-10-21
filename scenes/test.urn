@@ -7,7 +7,7 @@ camera: [
 	lens: [ radius: 0.05 focal-distance: 5 ]
 ]
 materials: [
-	green: [ glass [0.1 0.7 0.2] 1.4 ]
+	green: [ diffuse [0.1 0.7 0.2] 1.4 ]
 	red: [ diffuse [0.7 0.2 0.1] ]
 	checkerboard: [ diffuse texture [ checkerboard [0 0 0] [1 1 1] 4 ] ]
 ]

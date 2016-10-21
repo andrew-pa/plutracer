@@ -13,6 +13,13 @@ namespace plu {
 			}
 
 			bool hit(const ray& r, hit_record* hr) const override;
+
+			float area() const override { return (4.f/3.f)*pi<float>()*radius*radius*radius; }
+			vec3 sample(vec2 u, vec3* n) const override {
+				vec3 np = rnd::uniform_sphere_sample(u);
+				*n = np;
+				return center+np*radius;
+			}
 		};
 	}
 }

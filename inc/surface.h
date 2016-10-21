@@ -14,6 +14,24 @@ namespace plu {
 		// return an AABB that surrounds (hopefully fairly tightly) the surface
 		virtual aabb bounds() const = 0;
 
+		virtual float area() const { throw runtime_error("unimplmented surface::area"); }
+
+		// return a random point on the surface
+		// TODO: could be rewritten to return a tuple
+		virtual vec3 sample(vec2 u, vec3* n) const { throw runtime_error("unimplemented surface::sample"); }
+		virtual vec3 sample(vec3 P, vec2 u, vec3* n) const { return sample(u,n); }
+
+		// returns the probablity that the point given will be sampled
+		virtual float pdf(vec3 p) const { return 1.f / area(); }
+		virtual float pdf(vec3 p, vec3 wi) const {
+			hit_record hr;
+			if(!hit(ray(p,wi),&hr)) return 0.f;
+			else {
+				vec3 D = p + wi*hr.t;
+				return dot(D,D) / (abs(dot(hr.norm,-wi)) * area());
+			}
+		}	
+
 		// the material for this surface
 		shared_ptr<material> mat;
 

@@ -1,4 +1,5 @@
 #include "material.h"
+#include "lights/area_light.h"
 
 namespace plu {
 	vec3 bsdf::F(vec3 n, vec3 wwo, vec3 wwi, bxdf::type types) const {
@@ -62,4 +63,10 @@ namespace plu {
 			}
 		return w > 0.f ? pdf / w : 0.f;
 	}
+
+	vec3 material::Le(vec3 p, vec3 n, vec3 v) const {
+		auto l = area_light();
+		return l != nullptr ? l->L(p, n, v) : vec3(0.f);
+	}
+
 }
