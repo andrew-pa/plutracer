@@ -13,6 +13,7 @@ namespace plu {
 		vec2 inv_image_size;
 		float w, lens_radius, focal_distance;
 
+		camera() {}
 		camera(vec3 _p, vec3 target, uvec2 target_size, float ln = 0.f, float fd = 0.f, float _w = 2.5f)
 			: pos(_p), w(_w), lens_radius(ln), focal_distance(fd), inv_image_size(1.f/(vec2)target_size)
 		{

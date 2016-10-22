@@ -1,6 +1,6 @@
 [
 	resolution: [1280 960]
-	antialiasing-samples: 16 
+	antialiasing-samples: 8 
 	camera: [
 		position:	[4 8 -14]
 		target:		[0 0 0]
@@ -11,7 +11,10 @@
 		red: [ diffuse texture [ grid [0.9 0.3 0.1] [0 0 0] 16 0.1 ] ]
 		checkerboard: [ diffuse texture [ checkerboard [0 1 0] [1 1 0] 8 ] ]
 	]
-	objects: ([box [0 0 0] [10 0.1 10] 'checkerboard] + (concat-all (collect-range 'x [-8 8] [ 
+	objects: ([
+			box [0 0 0] [10 0.1 10] 'checkerboard
+			point-light [0 15 0] [10000 10000 1000]
+		] + (concat-all (collect-range 'x [-8 8] [ 
 		concat-all (collect-range 'y [-8 8] [
 			block-format [sphere :0 0.5 :1] [ reduce [x 1.2 y] 'red ]
 		])

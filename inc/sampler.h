@@ -6,7 +6,7 @@ namespace plu {
 	struct sample {
 		vec2 px;
 		vec2 lens;
-		std::array<float, 256> floats;
+		std::array<float, 1> floats;
 		size_t next_float;
 
 		inline float next() {

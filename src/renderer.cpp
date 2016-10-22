@@ -132,7 +132,7 @@ namespace plu {
 							target->pixel(floor(s.px)) += ray_color(r, s, arena) * smp_wgt;
 						}
 					}
-
+					cout << ".";
 					tiles_rendered++;
 					arena.free_all();
 				}

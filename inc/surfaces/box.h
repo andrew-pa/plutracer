@@ -21,7 +21,11 @@ namespace plu {
 			}
 			
 			vec3 sample(vec2 u, vec3* n) const override {
-				int face = (int)floor(u.x*6.f);
+				vec3 U = vec3(u.x, rnd::randf(), u.y);
+				vec3 p = box_bounds._min + U*box_bounds.extents();
+				*n = get_normal(p);
+				return p;
+				/*int face = (int)floor(u.x*6.f);
 				u.x = fract(u.x*6.f);
 				vec3 ex = box_bounds.extents();
 				vec2 t = vec2(ex[(face+1) % 3], ex[(face+2)%3]);
@@ -32,7 +36,7 @@ namespace plu {
 				v[(face % 3)] = ex[face % 3] * (face > 3 ? -1.f : 1.f);
 				*n = vec3(0.f);
 				(*n)[face % 3] = face < 3 ? 1.f : -1.f;
-				return v;
+				return v;*/
 			}
 		};
 	}
