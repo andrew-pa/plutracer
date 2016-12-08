@@ -1,0 +1,15 @@
+[
+	resolution: [640 480]
+	antialiasing-samples: 8
+	camera: [
+		position:	[4 5 -10]
+		target:		[0 0 0]
+		up:		[0 1 0]
+	]
+	materials: [
+	]
+	objects:  [
+		diffuse-area-light [ box [ 0 1.1 0 ] [0.5 1 0.5] ] [100 100 100]
+		box [0 0 0] [5 0.1 5] [ diffuse [0.1 0.1 0.1] ]
+	]
+]

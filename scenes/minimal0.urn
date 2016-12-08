@@ -11,6 +11,7 @@
 	objects:  [
 		diffuse-area-light [ box [ -1 5 -1 ] [0.5 0.1 2] ] [10000 10000 9000]
 		box [0 0 0] [5 0.1 5] [ diffuse [0.3 0.3 0.3] ]
+		box [0 2.5 5] [5 5 0.1] [ diffuse [0.3 0.3 0.3] ]
 		sphere [0 1.2 0] 1 [ diffuse [0.01 0.0 0.4] ]
 	]
 ]

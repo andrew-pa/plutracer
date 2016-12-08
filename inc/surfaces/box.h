@@ -22,8 +22,15 @@ namespace plu {
 			
 			vec3 sample(vec2 u, vec3* n) const override {
 				vec3 U = vec3(u.x, rnd::randf(), u.y);
+				int mi = rnd::randi(0, 2);
+				U[mi] = U[mi] > 0.5f ? 1.f : 0.f;
 				vec3 p = box_bounds._min + U*box_bounds.extents();
-				*n = get_normal(p);
+				*n = vec3(0.f);
+				(*n)[mi] = U[mi] > 0.5f ? 1.f : -1.f;
+				/*if (*n != get_normal(p)) {
+					cout << *n << "  " << get_normal(p) << endl;
+					throw *n;
+				}/*/
 				return p;
 				/*int face = (int)floor(u.x*6.f);
 				u.x = fract(u.x*6.f);

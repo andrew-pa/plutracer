@@ -10,12 +10,6 @@ namespace plu {
 			//recursive base case: list size == 1, or 2
 			//set parent of both nodes == root
 			
-			std::sort(s.begin(), s.end(), [axis](shared_ptr<surface> s1, shared_ptr<surface> s2) {
-				vec3 c1 = s1->bounds().center();
-				vec3 c2 = s2->bounds().center();
-				return c1[axis] < c2[axis];
-			});
-
 			if (s.size() == 1) {
 				object = s[0];
 				bounds = object->bounds();
@@ -25,7 +19,13 @@ namespace plu {
 				right_child = make_unique<bvh_node>(this, s[1]);
 				bounds = aabb(left_child->bounds, right_child->bounds);
 			}
-			else {
+			else {	
+				std::sort(s.begin(), s.end(), [axis](shared_ptr<surface> s1, shared_ptr<surface> s2) {
+					vec3 c1 = s1->bounds().center();
+					vec3 c2 = s2->bounds().center();
+					return c1[axis] < c2[axis];
+				});
+
 				int mid = s.size() / 2;
 				vector<shared_ptr<surface>> lv(s.begin(), s.begin() + mid);
 				vector<shared_ptr<surface>> rv(s.begin() + mid, s.end());

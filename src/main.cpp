@@ -3,6 +3,7 @@
 #include "texture.h"
 #include "renderer.h"
 #include "surfaces/surfaces.h"
+#include "surfaces/triangle.h"
 #include "textures/textures.h"
 #include "sampler.h"
 #include "light.h"
@@ -148,13 +149,18 @@ int main(int argc, char* argv[]) {
 
 	shared_ptr<plu::texture2d> tx = make_shared<plu::texture2d>(sc.resolution);
 
-	auto M = make_shared<plu::materials::emission_material>(nullptr);
+/*	auto M = make_shared<plu::materials::emission_material>(nullptr);
 	auto sh = //make_shared<plu::surfaces::sphere>(vec3(-1.f, 4.9f, -1.f), 1.f, M);
 				make_shared<plu::surfaces::box>(vec3(-1.f, 4.9f, -1.f), vec3(1.f, .1f, 1.f), M);
 	auto L = make_shared<plu::lights::diffuse_area_light>(vec3(10000000.f), sh);
-	M->L = L;
+	M->L = L;*/
 	//lights.push_back(L);
 	//surfs.push_back(sh);
+	vec3 a(0.f, 1.f, -3.f), b(3.f, 1.f, 3.f), c(-3.f, 1.f, 3.f), n(0.f, 1.f, 0.f);
+	vec2 t(0.f);
+	auto tri = make_shared<plu::surfaces::triangle>(&a, &b, &c, &n, &n, &n, &t, &t, &t);
+	tri->mat = make_shared<plu::materials::diffuse_material>(vec3(.6f, 0.f, 0.f));
+	sc.surfs.push_back(tri);
 
 	auto s = //new plu::group(surfs);
 		new plu::surfaces::bvh_tree(sc.surfs);
