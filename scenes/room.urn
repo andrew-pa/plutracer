@@ -1,0 +1,23 @@
+[
+	resolution: [640 480]
+	antialiasing-samples: 16
+	camera: [
+		position:	[3 4 6]
+		target:		[0 2 0]
+		up:		[0 1 0]
+	]
+	materials: [
+		floor: [ diffuse texture [ checkerboard [0.03 0.03 0.03] [0.8 0.8 0.8] 2 ] ]
+		wall: [ diffuse [0.2 0.2 0.2] ]
+	]
+	objects:  [
+		point-light [4 5 4] [120 120 100]
+		point-light [-4 5 4] [120 100 120]
+		point-light [0 5 -4] [100 120 120]
+		box [0 0 0] [5 0.1 5] 'floor
+		box [1.2 2 0] [0.2 2 0.2] [ diffuse [0.0 0.2 0.6] ]
+		box [-1.2 2 0] [0.2 2 0.2] [ diffuse [0.2 0.0 0.6] ]
+		box [0 2 0] [0.2 2 0.2] [ diffuse [0.0 0.6 0.2] ]
+		sphere [3 1 -2] 1 [ perfect-reflection [1 1 1] [1.4 1.4 1.4] [1 1 1] ]
+	]
+]

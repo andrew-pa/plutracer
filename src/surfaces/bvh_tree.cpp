@@ -57,30 +57,21 @@ namespace plu {
 			
 			//right hit only
 			if (lhit == false) {
-				if (hr == nullptr)
-					return true;
-				*hr = rhr;
+				if (hr != nullptr) *hr = rhr;
 				return true;
 			}
 
 			//right hit only
 			if (rhit == false) {
-				if (hr == nullptr)
-					return true;
-				*hr = lhr;
+				if (hr != nullptr) *hr = lhr;
 				return true;
 			}
 
 			//both hit
-			if (hr == nullptr)
-				return true;
 			//set hr to closest hit
-			if (lhr.t < rhr.t) {
-				*hr = lhr;
-				return true;
-			}
-
-			*hr = rhr;
+			if (hr != nullptr)
+				*hr = lhr.t < rhr.t ? lhr : rhr;
+			
 			return true;
 		}
 	}
