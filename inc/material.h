@@ -198,6 +198,16 @@ namespace plu {
 		vec3 Le(vec3 p, vec3 n, vec3 v) const;
 	};
 
+	struct forward_material : public material {
+		shared_ptr<material>* mat;
+		forward_material(shared_ptr<material>* mat) : mat(mat) {}
+
+		bsdf operator()(const hit_record& hr, memory::arena& ma) const override {
+			return (**mat)(hr, ma);
+		}
+		lights::area_light* area_light() const override { return (*mat)->area_light(); }
+	};
+
 	namespace materials {
 #define newma(type) new (ma.allocate(sizeof(type))) type
 		struct diffuse_material : public material {

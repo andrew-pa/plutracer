@@ -8,7 +8,8 @@ namespace plu {
 			vec3* normals[3];
 			vec2* texture_coords[3];
 
-			triangle(vec3* va, vec3* vb, vec3* vc, vec3* na, vec3* nb, vec3* nc, vec2* ta, vec2* tb, vec2* tc) 
+			triangle(vec3* va, vec3* vb, vec3* vc, vec3* na, vec3* nb, vec3* nc, vec2* ta, vec2* tb, vec2* tc, shared_ptr<material> mat)
+				: surface(mat)
 			{
 				vertices[0] = va; vertices[1] = vb; vertices[2] = vc;
 				normals[0] = na; normals[1] = nb; normals[2] = nc;

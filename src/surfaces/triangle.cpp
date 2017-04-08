@@ -22,9 +22,10 @@ namespace plu {
 			float nt = dot(e2, qv)*idet;
 			if (nt > 0 && nt < hr->t)
 			{
+				auto U = normalize(e1), V = normalize(e2);
 				float w = 1 - (u + v);
-				hr->set(this, nt, *normals[0]*u + *normals[1]*v + *normals[2]*w,
-					*texture_coords[0]*u + *texture_coords[1]*v + *texture_coords[2]*w);
+				hr->set(this, nt, cross(U,V),//*u + *normals[1]*v + *normals[2]*w,
+					*texture_coords[0]*u + *texture_coords[1]*v + *texture_coords[2]*w, U, V);
 				return true;
 			}
 			return false;

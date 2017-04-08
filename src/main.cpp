@@ -14,6 +14,9 @@
 
 #include "scene.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "tiny_obj_loader.h"
+
 /*
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -156,11 +159,11 @@ int main(int argc, char* argv[]) {
 	M->L = L;*/
 	//lights.push_back(L);
 	//surfs.push_back(sh);
-	vec3 a(0.f, 1.f, -3.f), b(3.f, 1.f, 3.f), c(-3.f, 1.f, 3.f), n(0.f, 1.f, 0.f);
+	/*vec3 a(0.f, 1.f, -3.f), b(3.f, 1.f, 3.f), c(-3.f, 1.f, 3.f), n(0.f, 1.f, 0.f);
 	vec2 t(0.f);
 	auto tri = make_shared<plu::surfaces::triangle>(&a, &b, &c, &n, &n, &n, &t, &t, &t);
 	tri->mat = make_shared<plu::materials::diffuse_material>(vec3(.6f, 0.f, 0.f));
-	sc.surfs.push_back(tri);
+	sc.surfs.push_back(tri);*/
 
 	auto s = //new plu::group(surfs);
 		new plu::surfaces::bvh_tree(sc.surfs);

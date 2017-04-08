@@ -48,21 +48,21 @@ namespace plu {
 			//create hr for each side so they can be compared
 			hit_record lhr, rhr;
 
-			bool lhit = left_child->hit(r, &lhr);
-			bool rhit = right_child->hit(r, &rhr);
+			bool lhit = left_child->hit(r, &lhr),
+				rhit = right_child->hit(r, &rhr);
 
 			//no hit
-			if (lhit == false && rhit == false)
+			if (!lhit && !rhit)
 				return false;
 			
 			//right hit only
-			if (lhit == false) {
+			if (!lhit) {
 				if (hr != nullptr) *hr = rhr;
 				return true;
 			}
 
-			//right hit only
-			if (rhit == false) {
+			//left hit only
+			if (!rhit) {
 				if (hr != nullptr) *hr = lhr;
 				return true;
 			}

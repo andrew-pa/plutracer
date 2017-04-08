@@ -34,9 +34,15 @@ namespace plu {
 
 			unique_ptr<bvh_node> root;
 		public:
-			bvh_tree(vector<shared_ptr<surface>>& s) {
+			void set(vector<shared_ptr<surface>>& s) {
 				root = make_unique<bvh_node>(nullptr, s);
 			}
+
+			bvh_tree() : root(nullptr) {}
+			bvh_tree(vector<shared_ptr<surface>>& s) {
+				set(s);
+			}
+
 
 			inline aabb bounds() const override {
 				return root->bounds;
